@@ -26,10 +26,10 @@ BRIEF DESCRIPTION:
 <Summary of purpose and basic functionality>
 
 CORE OOP CONCEPTS:
-- Encapsulation: <where/how>
-- Inheritance: <where/how>
-- Polymorphism: <where/how>
-- Abstraction: <where/how>
+- Encapsulation: Classes like Reservation, Trip, and Passenger keep their data private and expose only necessary methods (e.g., reserveSeat(), cancelReservation()). <br>
+- Inheritance: Passenger, Driver, and Administrator inherit from a common User class.<br>
+- Polymorphism: Different user types override methods such as displayDashboard() or performAction().<br>
+- Abstraction: Interfaces or abstract classes such as Validator, Repository, or User hide implementation details from the GUI.<br>
 
 INITIAL CLASS IDEAS:
 - ClassName1: <responsibility>
@@ -37,8 +37,9 @@ INITIAL CLASS IDEAS:
 - ClassName3: <responsibility>
 
 USER STORIES (Recommended):
-- As a <user type>, I want to <action> so that <goal>.
-- As a <user type>, I want to <action> so that <goal>.
+- As a DLSU student, I want to see the current seat reservation progress so I know if a certain bus schedule is full or not.
+- As a regular shuttle user going to Laguna and back, I want to know the actual schedules of each bus so that I can know the time a bus would come or go.
+- As a new user of the shuttle service reservation, I want the platform to be well organized so that I am given the correct and overall information I need to go inside the bus.
 
 CORE FEATURES (Recommended):
 - <Feature 1>

@@ -24,12 +24,12 @@ TARGET USER:
 AniLink is intended to help serve the community of De La Salle University (DLSU). The platform has three specific categories for its target users.
 
 1. Passengers
-DLSU Students (Undergraduate and Graduate): Students with Inter-campus enrolled subjects or in thesis using Inter-campus facilities. They will use the platform to reserve seats, view departure schedules, monitor their status, and generate QR codes or tickets for a seamless boarding.
+DLSU Students (Undergraduate and Graduate): Students with Inter-campus enrolled subjects or in thesis using Inter-campus facilities. They will use the platform to reserve seats, view departure schedules, monitor their status, and generate QR codes/tickets/cards for a seamless boarding.
 
 DLSU Faculty and Staffs: Faculty with Inter-campus assignments.
 
 2. Shuttle Drivers and Administrators
-Assigned DLSU Drivers and Facilitators: They are responsible for monitoring and operating the DLSU Shuttle. They will use the platform to ensure a smooth boarding process by scanning the QR codes or validating the passengers' tickets. They will also use the platform to monitor and update real-time data such as the time and status of their trip. 
+Assigned DLSU Drivers and Facilitators: They are responsible for monitoring and operating the DLSU Shuttle. They will use the platform to ensure a smooth boarding process by scanning the QR codes or validating the passengers' tickets or cards. They will also use the platform to monitor and update real-time data such as the time and status of their trip. 
 
 
 BRIEF DESCRIPTION:

@@ -35,7 +35,9 @@ Assigned DLSU Drivers and Facilitators: They are responsible for monitoring and 
 BRIEF DESCRIPTION:
 AniLink is a mobile application which is a platform for shuttle management which is designed to manage the DLSU shuttle service for students and faculty traveling between the Laguna and Manila campuses. This application replaces the manual (google form-based) reservation system with a structured and organized shuttle operations through an hierarchy of: Category → Line → Route → Departure Schedule → Trip → Reservation.
 
-Through the platform, passengers can browse available routes and departure schedules, reserve seats in real time, and receive a QR code/digital card or ticket for a fast and contactless passenger verification.
+Through the platform, passengers can browse available routes and departure schedules, reserve seats in real time, and receive a QR code/digital card or ticket for a fast and contactless passenger verification. The application contains built-in validation checks such as route limit and category limit checks to ensure fair seat distribution and the prevention of duplicate same day bookings, while a first-in, first-out (FIFO) waitlist automatically promotes passengers when confirmed reservations are cancelled.
+
+
 
 CORE OOP CONCEPTS:
 - Encapsulation: Classes like Reservation, Trip, and Passenger keep their data private and expose only necessary methods (e.g., reserveSeat(), cancelReservation()). <br>

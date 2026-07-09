@@ -33,7 +33,7 @@ Assigned DLSU Drivers and Facilitators: They are responsible for monitoring and 
 
 
 BRIEF DESCRIPTION:
-
+AniLink is a mobile application which is a platform for shuttle management which is designed to manage the DLSU shuttle service for students and faculty traveling between the Laguna and Manila campuses.
 
 CORE OOP CONCEPTS:
 - Encapsulation: Classes like Reservation, Trip, and Passenger keep their data private and expose only necessary methods (e.g., reserveSeat(), cancelReservation()). <br>

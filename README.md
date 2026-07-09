@@ -47,15 +47,16 @@ CORE OOP CONCEPTS:
 
 INITIAL CLASS IDEAS:
 
-1. User (Abstract Class): Parent class and responsible for encapsulating shared attributes like userName/userID, name, and email.
-2. Passenger (Inherits User): Represents the DLSU Students and Faculties and responsible for tracking their personal reservations history.
-3. Driver (Inherits User): For the Assigned Shuttle Drives and responsible for passenger verification and updating real-time data. 
-4. Administrator (Inherits User): For the campus transport administrator and responsible for system configuration.
-5. Route: Represent the travel path and responsible for aggregating its associated departure schedules and validating if a passenger has already booked this specific path today.
-6. DepartureSchedule: Represents the planned timeslot.
-7. Trip: The physical shuttle bus.
-8. Reservation: Booking transaction and responsible for linking Passenger to a Trip.
-9. ReservationManager (Controller): Acts as the central logic handler. Responsible for processing the first-in, first-out (FIFO) waitlist promotion when someone cancels, and enforcing the business rules (Category Limit and Route Limit validations) before finalizing a Reservation object.
+1. User (Abstract Class): Parent class responsible for encapsulating shared identity attributes. Attributes include userID, firstName, lastName, dlsuEmail, and accountStatus. Methods include login(), logout(), and updateProfile().
+2. Passenger (Inherits User): Represents DLSU Students and Faculty booking the shuttles. Attributes include dlsuIDNumber, passengerCategory, and reservationHistory. Methods include requestBooking(), cancelBooking(), and viewActiveReservations().
+3. Driver (Inherits User): Represents the assigned shuttle operators verifying passengers. Attributes include licenseNumber, assignedVehicle, and currentTrip. Methods include scanBoardingPass(), updateTripStatus(), and viewPassengerManifest().
+4. Administrator (Inherits User): Represents the campus transport managers configuring the system. Attributes include adminRole and department. Methods include manageRoutes(), manageSchedules(), generateUtilizationReports(), and overrideWaitlist().
+5. Route: Represents the physical travel path. Attributes include routeID, origin, destination, and departureSchedules. Methods include addSchedule(), getSchedulesForDay(), and validateDailyRouteLimit().
+6. DepartureSchedule: Represents the planned master timeslots. Attributes include scheduleID, departureTime, operatingDays, and isActive. Methods include generateDailyTrips().
+7. Vehicle: Represents the physical shuttle bus. Attributes include plateNumber, capacity, and vehicleStatus. Methods include updateStatus() and getCapacity().
+8. Trip: Represents a specific travel event for a given day. Attributes include tripID, date, route, schedule, assignedVehicle, assignedDriver, and tripStatus. Methods include getAvailableSeats() and getWaitlistQueue().
+9. Reservation: Represents the booking transaction linking a passenger to a trip. Attributes include reservationID, passenger, trip, timestamp, status, and qrCodePayload. Methods include generateQRCode() and updateReservationStatus().
+10. ReservationManager (Controller): Acts as the central logic handler enforcing business rules. Attributes include maxDailyReservationsPerUser and categorySeatAllocation. Methods include processBookingRequest(), handleCancellation(), processFIFO_Waitlist(), and enforceCategoryLimit().
 
 
 USER STORIES (Recommended):

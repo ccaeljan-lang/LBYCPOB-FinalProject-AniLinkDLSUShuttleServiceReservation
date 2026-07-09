@@ -1,10 +1,10 @@
 PROJECT TITLE:
 AniLink: DLSU Shuttle Service Reservation
 
-TEAM MEMBERS:
-Caeljan D. Cristobal> - ccaeljan-lang
-Froilene pangit> - GitHub username
-Shawn Derek A. Paingan> - GitHub username
+TEAM MEMBERS:<br>
+Caeljan D. Cristobal - ccaeljan-lang<br>
+Froilene pangit - GitHub username<br>
+Shawn Derek A. Paingan - GitHub username<br>
 
 PROBLEM STATEMENT & GOALS:<br>
 Goals:

@@ -20,7 +20,17 @@ Problem Statement:
 
 
 TARGET USER:
-<Who will use this system?>
+
+AniLink is intended to help serve the community of De La Salle University (DLSU). The platform has three specific categories for its target users.
+
+1. Passengers
+DLSU Students (Undergraduate and Graduate): Students with Inter-campus enrolled subjects or in thesis using Inter-campus facilities. They will use the platform to reserve seats, view departure schedules, monitor their status, and generate QR codes or tickets for a seamless boarding.
+
+DLSU Faculty and Staffs: Faculty with Inter-campus assignments.
+
+2. Shuttle Drivers and Administrators
+Assigned DLSU Drivers and Facilitators: They are responsible for monitoring and operating the DLSU Shuttle. They will use the platform to ensure a smooth boarding process by scanning the QR codes or validating the passengers' tickets. They will also use the platform to monitor and update real-time data such as the time and status of their trip. 
+
 
 BRIEF DESCRIPTION:
 
@@ -32,9 +42,17 @@ CORE OOP CONCEPTS:
 - Abstraction: Interfaces or abstract classes such as Validator, Repository, or User hide implementation details from the GUI.<br>
 
 INITIAL CLASS IDEAS:
-- ClassName1: <responsibility>
-- ClassName2: <responsibility>
-- ClassName3: <responsibility>
+
+1. User (Abstract Class) - Parent class and responsible for encapsulating shared attributes like userName/userID, name, and email.
+2. Passenger (Inherits User) - Represents the DLSU Students and Faculties and responsible for tracking their personal reservations history.
+3. Driver (Inherits User) - For the Assigned Shuttle Drives and responsible for passenger verification and updating real-time data. 
+4. Administrator (Inherits User) - For the campus transport administrator and responsible for system configuration.
+5. Route - Represent the travel path and responsible for aggregating its associated departure schedules and validating if a passenger has already booked this specific path today.
+6. DepartureSchedule - Represents the planned timeslot.
+7. Trip - The physical shuttle bus.
+8. Reservation - Booking transaction and responsible for linking Passenger to a Trip.
+9. ReservationManager (Controller) - Acts as the central logic handler. Responsible for processing the first-in, first-out (FIFO) waitlist promotion when someone cancels, and enforcing the business rules (Category Limit and Route Limit validations) before finalizing a Reservation object.
+
 
 USER STORIES (Recommended):
 - As a DLSU student, I want to see the current seat reservation progress so I know if a certain bus schedule is full or not.

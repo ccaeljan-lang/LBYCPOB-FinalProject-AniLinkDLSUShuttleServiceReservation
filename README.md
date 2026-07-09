@@ -67,6 +67,11 @@ USER STORIES (Recommended):
 - As a new user of the shuttle service reservation, I want the platform to be well organized so that I am given the correct and overall information I need to get on the bus.
 
 CORE FEATURES (Recommended):
-- <Feature 1>
-- <Feature 2>
-- <Feature 3>
+- Automated Reservation and Waitlist
+- The system does real-time bookings and sorts users by category. If someone cancels their confirmed seat, it automatically gives it to the next person on the waitlist using FIFO. It also blocks duplicate bookings by checking the daily route limit.
+- Contactless QR Code Verification
+- Every confirmed booking gets its own QR code. Drivers just scan it from their account to verify passengers. No more checking names on a list, so boarding is way faster.
+- Dynamic Trip Status Tracking
+- Passengers can check routes, schedules, and how many seats are left in real time. Drivers update the trip status like Boarding, Departed, or Completed as it happens. This way everyone knows what's going on with the shuttle.
+- Centralized Profile and History
+- The app saves passenger info in their profile so they don't have to type it in every time they book. Users can also see their current bookings and past trips in one place.

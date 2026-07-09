@@ -75,3 +75,6 @@ For the administration, staff can manage Lines, Routes, and Departure Schedules,
 - Passengers can check routes, schedules, and how many seats are left in real time. Drivers update the trip status like Boarding, Departed, or Completed as it happens. This way everyone knows what's going on with the shuttle.
 - Centralized Profile and History
 - The app saves passenger info in their profile so they don't have to type it in every time they book. Users can also see their current bookings and past trips in one place.
+
+## SAMPLE IMAGES
+<img width="1024" height="768" alt="Heading (1)" src="https://github.com/user-attachments/assets/d96bc114-9224-449c-9854-7277c9fda86a" />

@@ -43,15 +43,15 @@ CORE OOP CONCEPTS:
 
 INITIAL CLASS IDEAS:
 
-1. User (Abstract Class) - Parent class and responsible for encapsulating shared attributes like userName/userID, name, and email.
-2. Passenger (Inherits User) - Represents the DLSU Students and Faculties and responsible for tracking their personal reservations history.
-3. Driver (Inherits User) - For the Assigned Shuttle Drives and responsible for passenger verification and updating real-time data. 
-4. Administrator (Inherits User) - For the campus transport administrator and responsible for system configuration.
-5. Route - Represent the travel path and responsible for aggregating its associated departure schedules and validating if a passenger has already booked this specific path today.
-6. DepartureSchedule - Represents the planned timeslot.
-7. Trip - The physical shuttle bus.
-8. Reservation - Booking transaction and responsible for linking Passenger to a Trip.
-9. ReservationManager (Controller) - Acts as the central logic handler. Responsible for processing the first-in, first-out (FIFO) waitlist promotion when someone cancels, and enforcing the business rules (Category Limit and Route Limit validations) before finalizing a Reservation object.
+1. User (Abstract Class): Parent class and responsible for encapsulating shared attributes like userName/userID, name, and email.
+2. Passenger (Inherits User): Represents the DLSU Students and Faculties and responsible for tracking their personal reservations history.
+3. Driver (Inherits User): For the Assigned Shuttle Drives and responsible for passenger verification and updating real-time data. 
+4. Administrator (Inherits User): For the campus transport administrator and responsible for system configuration.
+5. Route: Represent the travel path and responsible for aggregating its associated departure schedules and validating if a passenger has already booked this specific path today.
+6. DepartureSchedule: Represents the planned timeslot.
+7. Trip: The physical shuttle bus.
+8. Reservation: Booking transaction and responsible for linking Passenger to a Trip.
+9. ReservationManager (Controller): Acts as the central logic handler. Responsible for processing the first-in, first-out (FIFO) waitlist promotion when someone cancels, and enforcing the business rules (Category Limit and Route Limit validations) before finalizing a Reservation object.
 
 
 USER STORIES (Recommended):

@@ -78,7 +78,7 @@ For the administration, staff can manage Lines, Routes, and Departure Schedules,
 
 ## SAMPLE IMAGES<br>
 ### Login
-<img width="1024" height="768" alt="Heading (1)" src="https://github.com/user-attachments/assets/d96bc114-9224-449c-9854-7277c9fda86a" />
+<img width="1024" height="768" alt="Heading (1)" src="https://github.com/user-attachments/assets/d96bc114-9224-449c-9854-7277c9fda86a" /><br>
 ### Dashboard (Passenger)
 <img width="1024" height="768" alt="Heading (2)" src="https://github.com/user-attachments/assets/8374261d-321f-4830-a3e4-84b47940a300" />
 

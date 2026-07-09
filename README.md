@@ -2,11 +2,11 @@ PROJECT TITLE:
 AniLink: DLSU Shuttle Service Reservation
 
 TEAM MEMBERS:
-<Caeljan D. Cristobal> - <ccaeljan-lang>
-<Froilene pangit> - <GitHub username>
-<Shawn Derek A. Paingan> - <GitHub username>
+Caeljan D. Cristobal> - ccaeljan-lang
+Froilene pangit> - GitHub username
+Shawn Derek A. Paingan> - GitHub username
 
-PROBLEM STATEMENT & GOALS:
+PROBLEM STATEMENT & GOALS:\n
 Goals:
 To develop a centralized shuttle management platform that improves the efficiency, accessibility, and reliability of the DLSU shuttle service.
 1. To provide a digital platform for shuttle scheduling and seat reservations.

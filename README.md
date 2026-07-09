@@ -6,7 +6,7 @@ Caeljan D. Cristobal> - ccaeljan-lang
 Froilene pangit> - GitHub username
 Shawn Derek A. Paingan> - GitHub username
 
-PROBLEM STATEMENT & GOALS:\n
+PROBLEM STATEMENT & GOALS:<br>
 Goals:
 To develop a centralized shuttle management platform that improves the efficiency, accessibility, and reliability of the DLSU shuttle service.
 1. To provide a digital platform for shuttle scheduling and seat reservations.

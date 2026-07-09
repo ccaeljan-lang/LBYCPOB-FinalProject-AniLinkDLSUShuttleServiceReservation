@@ -3,7 +3,7 @@ AniLink: DLSU Shuttle Service Reservation
 
 TEAM MEMBERS:<br>
 Caeljan D. Cristobal - ccaeljan-lang<br>
-Froilene pangit - GitHub username<br>
+Froilene Nicole A. Villaluz - froileneeeee<br>
 Shawn Derek A. Paingan - GitHub username<br>
 
 PROBLEM STATEMENT & GOALS:<br>

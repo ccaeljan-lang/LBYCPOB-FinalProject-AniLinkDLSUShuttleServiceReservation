@@ -1,4 +1,4 @@
-package org.example;
+package ph.edu.dlsu.anilink;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

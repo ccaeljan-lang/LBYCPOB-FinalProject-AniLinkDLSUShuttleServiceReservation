@@ -9,7 +9,13 @@ public class RouteLimitRule implements BookingRule {
 
     @Override
     public boolean validate(User user, Trip trip) {
-        return true; // Placeholder for future logic
+
+        // Rule only applies to passengers
+        if (!(user instanceof Passenger)) {
+            return false;
+        }
+
+        return true; // Limit logic to follow
     }
 
     @Override

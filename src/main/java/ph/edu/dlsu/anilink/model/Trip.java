@@ -28,4 +28,72 @@ public class Trip implements Trackable {
         this.currentLng = lng;
     }
 
+    @Override
+    public void updateStatus(String status) {
+        this.status = status;
+    }
+
+    public int getAvailableSeats() {
+        return capacity - seatsTaken;
+    }
+
+    public boolean addPassenger() {
+        if (!isFull()) {
+            seatsTaken++;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean removePassenger() {
+        if (seatsTaken > 0) {
+            seatsTaken--;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isFull() {
+        return seatsTaken >= capacity;
+    }
+
+    public Long getTripId() {
+        return tripId;
+    }
+
+    public Route getRoute() {
+        return route;
+    }
+
+    public DepartureSchedule getSchedule() {
+        return schedule;
+    }
+
+    public Driver getDriver() {
+        return driver;
+    }
+
+    public void setDriver(Driver driver) {
+        this.driver = driver;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public int getSeatsTaken() {
+        return seatsTaken;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public double getCurrentLat() {
+        return currentLat;
+    }
+
+    public double getCurrentLng() {
+        return currentLng;
+    }
 }

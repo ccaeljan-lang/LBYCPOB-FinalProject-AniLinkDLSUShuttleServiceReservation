@@ -21,6 +21,22 @@ public class RouteController {
         return routes;
     }
 
+    // GET route by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Route> getRouteById(
+            @PathVariable Long id) {
+
+        for (Route route : routes) {
+
+            if (route.getRouteId().equals(id)) {
+
+                return ResponseEntity.ok(route);
+            }
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
     // CREATE a new route
     @PostMapping
     public ResponseEntity<Route> createRoute(
@@ -31,5 +47,22 @@ public class RouteController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(route);
+    }
+
+    // DELETE route by ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRoute(
+            @PathVariable Long id) {
+
+        boolean removed = routes.removeIf(
+                route -> route.getRouteId().equals(id)
+        );
+
+        if (removed) {
+
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.notFound().build();
     }
 }

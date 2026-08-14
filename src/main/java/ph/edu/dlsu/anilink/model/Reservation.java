@@ -1,9 +1,8 @@
 package ph.edu.dlsu.anilink.model;
+
 import java.time.LocalDateTime;
 
 public class Reservation {
-
-    // Status constants
     public static final String CONFIRMED = "CONFIRMED";
     public static final String WAITLISTED = "WAITLISTED";
     public static final String VERIFIED = "VERIFIED";
@@ -14,19 +13,18 @@ public class Reservation {
     private Passenger passenger;
     private Trip trip;
     private LocalDateTime createdAt;
+    private String status;
+    private String qrPayload;
 
-    public Reservation(Long reservationId,
-                       Passenger passenger,
-                       Trip trip) {
-
+    public Reservation(Long reservationId, Passenger passenger, Trip trip) {
         this.reservationId = reservationId;
         this.passenger = passenger;
         this.trip = trip;
         this.createdAt = LocalDateTime.now();
-
-        // Default status
-        this.status = "WAITLISTED";
+        this.status = WAITLISTED;
+        this.qrPayload = "ANILINK-RES-" + reservationId;
     }
+
     public void confirm() {
         this.status = CONFIRMED;
     }
@@ -46,9 +44,11 @@ public class Reservation {
     public void complete() {
         this.status = COMPLETED;
     }
-    public String getStatus() {
-        return status;
+
+    public Long getReservationId() {
+        return reservationId;
     }
+
     public Passenger getPassenger() {
         return passenger;
     }
@@ -57,13 +57,14 @@ public class Reservation {
         return trip;
     }
 
-    public Long getReservationId() {
-        return reservationId;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
+
+    public String getStatus() {
+        return status;
+    }
+
     public String getQrPayload() {
         return qrPayload;
     }

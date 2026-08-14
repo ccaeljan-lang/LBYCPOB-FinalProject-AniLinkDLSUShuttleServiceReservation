@@ -2,6 +2,14 @@ package ph.edu.dlsu.anilink.model;
 import java.time.LocalDateTime;
 
 public class Reservation {
+
+    // Status constants
+    public static final String CONFIRMED = "CONFIRMED";
+    public static final String WAITLISTED = "WAITLISTED";
+    public static final String VERIFIED = "VERIFIED";
+    public static final String CANCELLED = "CANCELLED";
+    public static final String COMPLETED = "COMPLETED";
+
     private Long reservationId;
     private Passenger passenger;
     private Trip trip;
@@ -18,6 +26,25 @@ public class Reservation {
 
         // Default status
         this.status = "WAITLISTED";
+    }
+    public void confirm() {
+        this.status = CONFIRMED;
+    }
+
+    public void waitlist() {
+        this.status = WAITLISTED;
+    }
+
+    public void cancel() {
+        this.status = CANCELLED;
+    }
+
+    public void verify() {
+        this.status = VERIFIED;
+    }
+
+    public void complete() {
+        this.status = COMPLETED;
     }
     public String getStatus() {
         return status;

@@ -9,7 +9,6 @@ import javafx.scene.control.Label;
 import java.time.LocalDate;
 
 public class ReservationController {
-
     @FXML
     private ComboBox<String> routeSelection;
 
@@ -20,58 +19,44 @@ public class ReservationController {
     private ComboBox<String> scheduleSelection;
 
     @FXML
-    private Label availableSeatsLabel;
+    private Label availableSeats;
 
     @FXML
-    private Label reservationMessageLabel;
+    private Label tripStatus;
 
     @FXML
     private Button reserveButton;
 
     @FXML
-    private Button backButton;
+    private Label reservationMessage;
 
     @FXML
     private void initialize() {
         loadRoutes();
         loadSchedules();
-
-        availableSeatsLabel.setText("Available Seats: --");
-        reservationMessageLabel.setText("");
+        availableSeats.setText("Available Seats: --");
+        tripStatus.setText("Trip Status: --");
+        reservationMessage.setText("");
     }
 
     private void loadRoutes() {
-        routeSelection.getItems().clear();
-
-        routeSelection.getItems().addAll(
-                "Manila → Laguna",
-                "Laguna → Manila"
-        );
+        routeSelection.getItems().addAll("Manila → Laguna", "Laguna → Manila");
     }
 
     private void loadSchedules() {
-        scheduleSelection.getItems().clear();
-
-        scheduleSelection.getItems().addAll(
-                "7:00 AM",
-                "9:00 AM",
-                "11:00 AM",
-                "1:00 PM",
-                "3:00 PM",
-                "5:00 PM"
-        );
+        scheduleSelection.getItems().addAll("7:00 AM", "9:00 AM", "11:00 AM", "1:00 PM", "3:00 PM", "5:00 PM");
     }
 
     @FXML
     private void handleRouteSelection() {
-        String selectedRoute = routeSelection.getValue();
-
-        if (selectedRoute == null) {
-            availableSeatsLabel.setText("Available Seats: --");
+        if (routeSelection.getValue() == null) {
+            availableSeats.setText("Available Seats: --");
+            tripStatus.setText("Trip Status: --");
             return;
         }
 
-        availableSeatsLabel.setText("Available Seats: 30");
+        availableSeats.setText("Available Seats: 30");
+        tripStatus.setText("Trip Status: Available");
     }
 
     @FXML
@@ -80,7 +65,7 @@ public class ReservationController {
         LocalDate date = dateSelection.getValue();
         String schedule = scheduleSelection.getValue();
 
-        if (route == null || route.isEmpty()) {
+        if (route == null) {
             showMessage("Please select a route.");
             return;
         }
@@ -90,7 +75,7 @@ public class ReservationController {
             return;
         }
 
-        if (schedule == null || schedule.isEmpty()) {
+        if (schedule == null) {
             showMessage("Please select a schedule.");
             return;
         }
@@ -100,31 +85,10 @@ public class ReservationController {
             return;
         }
 
-        processReservation(route, date, schedule);
-    }
-
-    private void processReservation(
-            String route,
-            LocalDate date,
-            String schedule) {
-
-        showMessage(
-                "Reservation request submitted for "
-                        + route
-                        + " on "
-                        + date
-                        + " at "
-                        + schedule
-                        + "."
-        );
-    }
-
-    @FXML
-    private void handleBack() {
-        System.out.println("Returning to passenger dashboard...");
+        showMessage("Reservation request submitted.");
     }
 
     private void showMessage(String message) {
-        reservationMessageLabel.setText(message);
+        reservationMessage.setText(message);
     }
 }

@@ -175,6 +175,27 @@ public class TripManagementController {
         );
     }
 
+    @FXML
+    private void handleDeleteTrip() {
+
+        Trip selectedTrip =
+                tripListView.getSelectionModel()
+                        .getSelectedItem();
+
+        if (selectedTrip == null) {
+
+            showAlert(
+                    Alert.AlertType.WARNING,
+                    "No Selection",
+                    "Please select a trip."
+            );
+
+            return;
+        }
+
+        trips.remove(selectedTrip);
+    }
+
     private void showAlert(
             Alert.AlertType type,
             String title,

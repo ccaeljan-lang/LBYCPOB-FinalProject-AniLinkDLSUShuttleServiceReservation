@@ -28,6 +28,23 @@ public class LineManagementController {
         lineListView.setItems(lines);
     }
 
+    @FXML
+    private void handleAddLine() {
+
+        String lineName = lineNameField.getText().trim();
+        String locationA = locationAField.getText().trim();
+        String locationB = locationBField.getText().trim();
+
+        String line =
+                lineName
+                        + ": "
+                        + locationA
+                        + " ↔ "
+                        + locationB;
+
+        lines.add(line);
+    }
+
     private void clearFields() {
 
         lineNameField.clear();

@@ -126,6 +126,27 @@ public class ScheduleManagementController {
         }
     }
 
+    @FXML
+    private void handleDeleteSchedule() {
+
+        DepartureSchedule selectedSchedule =
+                scheduleListView.getSelectionModel()
+                        .getSelectedItem();
+
+        if (selectedSchedule == null) {
+
+            showAlert(
+                    Alert.AlertType.WARNING,
+                    "No Selection",
+                    "Please select a schedule."
+            );
+
+            return;
+        }
+
+        schedules.remove(selectedSchedule);
+    }
+
     private void clearFields() {
 
         scheduleIdField.clear();

@@ -125,6 +125,42 @@ public class TripManagementController {
         }
     }
 
+    @FXML
+    private void handleUpdateStatus() {
+
+        Trip selectedTrip =
+                tripListView.getSelectionModel()
+                        .getSelectedItem();
+
+        Trip.TripStatus selectedStatus =
+                statusComboBox.getValue();
+
+        if (selectedTrip == null
+                || selectedStatus == null) {
+
+            showAlert(
+                    Alert.AlertType.WARNING,
+                    "Missing Selection",
+                    "Please select a trip and status."
+            );
+
+            return;
+        }
+
+        selectedTrip.setStatus(
+                selectedStatus
+        );
+
+        tripListView.refresh();
+
+        showAlert(
+                Alert.AlertType.INFORMATION,
+                "Trip Updated",
+                "Trip status updated to "
+                        + selectedStatus
+        );
+    }
+
     private void clearFields() {
 
         tripIdField.clear();

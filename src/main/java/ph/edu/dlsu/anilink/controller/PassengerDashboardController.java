@@ -5,35 +5,34 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 public class PassengerDashboardController {
+    @FXML
+    private Label passengerName;
 
     @FXML
-    private Label passengerNameLabel;
+    private Label currentTrip;
 
     @FXML
-    private Label currentTripLabel;
+    private Label currentStatus;
 
     @FXML
-    private Label currentStatusLabel;
+    private Button bookTrip;
 
     @FXML
-    private Button bookTripButton;
+    private Button reservations;
 
     @FXML
-    private Button reservationsButton;
+    private Button profile;
 
     @FXML
-    private Button profileButton;
+    private Button logout;
 
     @FXML
-    private Button viewTicketButton;
-
-    @FXML
-    private Button logoutButton;
+    private Button viewTicket;
 
     @FXML
     private void initialize() {
-        currentTripLabel.setText("No current trip");
-        currentStatusLabel.setText("No active reservation");
+        currentTrip.setText("No current trip");
+        currentStatus.setText("No active reservation");
     }
 
     @FXML
@@ -62,14 +61,14 @@ public class PassengerDashboardController {
     }
 
     public void setPassengerName(String name) {
-        passengerNameLabel.setText(name);
+        passengerName.setText(name);
     }
 
     public void setCurrentTrip(String trip) {
-        currentTripLabel.setText(trip);
+        currentTrip.setText(trip);
     }
 
     public void setCurrentStatus(String status) {
-        currentStatusLabel.setText(status);
+        currentStatus.setText(status);
     }
 }

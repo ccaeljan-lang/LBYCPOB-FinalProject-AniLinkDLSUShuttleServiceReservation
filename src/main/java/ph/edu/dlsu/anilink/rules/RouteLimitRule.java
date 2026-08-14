@@ -1,4 +1,19 @@
 package ph.edu.dlsu.anilink.rules;
 
-public class RouteLimitRule {
+import ph.edu.dlsu.anilink.interfaces.BookingRule;
+import ph.edu.dlsu.anilink.model.Trip;
+import ph.edu.dlsu.anilink.model.User;
+
+public class RouteLimitRule implements BookingRule {
+    private static final int MAX_ROUTE_BOOKINGS = 1;
+
+    @Override
+    public boolean validate(User user, Trip trip) {
+        return true; // Placeholder for future logic
+    }
+
+    @Override
+    public String getErrorMessage() {
+        return "You have reached the booking limit for this route.";
+    }
 }

@@ -22,7 +22,14 @@ public class CategoryLimitRule implements BookingRule {
         int bookingCount = 0;
 
         for (Reservation reservation : passenger.getReservations()) {
-            bookingCount++;
+
+            String status = reservation.getStatus();
+
+            // Count only active reservations
+            if (!status.equals(Reservation.CANCELLED)
+                    && !status.equals(Reservation.COMPLETED)) {
+                bookingCount++;
+            }
         }
 
         return bookingCount < MAX_CATEGORY_BOOKINGS;

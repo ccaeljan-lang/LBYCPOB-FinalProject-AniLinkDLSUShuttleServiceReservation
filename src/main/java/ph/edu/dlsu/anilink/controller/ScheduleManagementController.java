@@ -11,6 +11,9 @@ import javafx.scene.control.TextField;
 import ph.edu.dlsu.anilink.model.DepartureSchedule;
 import ph.edu.dlsu.anilink.model.Route;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class ScheduleManagementController {
 
     @FXML
@@ -66,39 +69,61 @@ public class ScheduleManagementController {
             return;
         }
 
-        DateTimeFormatter formatter =
-                DateTimeFormatter.ofPattern(
-                        "yyyy-MM-dd HH:mm"
+        try {
+
+            DateTimeFormatter formatter =
+                    DateTimeFormatter.ofPattern(
+                            "yyyy-MM-dd HH:mm"
+                    );
+
+            LocalDateTime departureTime =
+                    LocalDateTime.parse(
+                            departureTimeText,
+                            formatter
+                    );
+
+            int reservationLimit =
+                    Integer.parseInt(limitText);
+
+            if (reservationLimit <= 0) {
+
+                showAlert(
+                        Alert.AlertType.WARNING,
+                        "Invalid Limit",
+                        "Reservation limit must be greater than zero."
                 );
 
-        LocalDateTime departureTime =
-                LocalDateTime.parse(
-                        departureTimeText,
-                        formatter
-                );
+                return;
+            }
 
-        int reservationLimit =
-                Integer.parseInt(limitText);
+            DepartureSchedule schedule =
+                    new DepartureSchedule(
+                            scheduleId,
+                            route,
+                            departureTime,
+                            reservationLimit
+                    );
 
-        DepartureSchedule schedule =
-                new DepartureSchedule(
-                        scheduleId,
-                        route,
-                        departureTime,
-                        reservationLimit
-                );
+            schedules.add(schedule);
 
-        schedules.add(schedule);
+            route.addSchedule(schedule);
 
-        route.addSchedule(schedule);
+            clearFields();
 
-        clearFields();
+            showAlert(
+                    Alert.AlertType.INFORMATION,
+                    "Schedule Added",
+                    "Departure schedule was successfully added."
+            );
+        } catch (Exception e) {
 
-        showAlert(
-                Alert.AlertType.INFORMATION,
-                "Schedule Added",
-                "Departure schedule was successfully added."
-        );
+            showAlert(
+                    Alert.AlertType.ERROR,
+                    "Invalid Input",
+                    "Use this date format:\n"
+                            + "yyyy-MM-dd HH:mm"
+            );
+        }
     }
 
     private void clearFields() {

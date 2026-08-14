@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ph.edu.dlsu.anilink.controller.RouteManagementController"
+      alignment="CENTER"
+      spacing="15"
+      prefWidth="1000"
+      prefHeight="650">
+    <padding>
+        <Insets top="40" right="50" bottom="40" left="50"/>
+    </padding>
+    <Label text="Route Management"/>
+    <TextField fx:id="routeIdField" promptText="Route ID" prefWidth="400" maxWidth="400"/>
+    <TextField fx:id="originField" promptText="Origin" prefWidth="400" maxWidth="400"/>
+    <TextField fx:id="destinationField" promptText="Destination" prefWidth="400" maxWidth="400"/>
+    <HBox alignment="CENTER" spacing="15">
+        <Button text="Add" onAction="#handleAddRoute" prefWidth="150"/>
+        <Button text="Delete" onAction="#handleDeleteRoute" prefWidth="150"/>
+    </HBox>
+    <ListView fx:id="routeListView" prefWidth="600" prefHeight="250" maxWidth="600"/>
+</VBox>

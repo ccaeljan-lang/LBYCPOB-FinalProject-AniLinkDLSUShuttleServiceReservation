@@ -91,6 +91,27 @@ public class RouteManagementController {
         );
     }
 
+    @FXML
+    private void handleDeleteRoute() {
+
+        Route selectedRoute =
+                routeListView.getSelectionModel()
+                        .getSelectedItem();
+
+        if (selectedRoute == null) {
+
+            showAlert(
+                    Alert.AlertType.WARNING,
+                    "No Selection",
+                    "Please select a route."
+            );
+
+            return;
+        }
+
+        routes.remove(selectedRoute);
+    }
+
     private void clearFields() {
 
         routeIdField.clear();

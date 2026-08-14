@@ -37,6 +37,36 @@ public class ScheduleManagementController {
         scheduleListView.setItems(schedules);
     }
 
+    @FXML
+    private void handleAddSchedule() {
+
+        String scheduleId =
+                scheduleIdField.getText().trim();
+
+        Route route =
+                routeComboBox.getValue();
+
+        String departureTimeText =
+                departureTimeField.getText().trim();
+
+        String limitText =
+                reservationLimitField.getText().trim();
+
+        if (scheduleId.isEmpty()
+                || route == null
+                || departureTimeText.isEmpty()
+                || limitText.isEmpty()) {
+
+            showAlert(
+                    Alert.AlertType.WARNING,
+                    "Missing Information",
+                    "Please complete all fields."
+            );
+
+            return;
+        }
+    }
+
     private void clearFields() {
 
         scheduleIdField.clear();

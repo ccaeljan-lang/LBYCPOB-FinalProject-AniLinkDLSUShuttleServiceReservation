@@ -9,22 +9,25 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
 import ph.edu.dlsu.anilink.model.DepartureSchedule;
+import ph.edu.dlsu.anilink.model.Route;
 import ph.edu.dlsu.anilink.model.Trip;
 
 public class TripManagementController {
+
     @FXML
     private TextField tripIdField;
 
     @FXML
-    private ComboBox<DepartureSchedule>
-            scheduleComboBox;
+    private ComboBox<Route> routeComboBox;
+
+    @FXML
+    private ComboBox<DepartureSchedule> scheduleComboBox;
 
     @FXML
     private TextField capacityField;
 
     @FXML
-    private ComboBox<Trip.TripStatus>
-            statusComboBox;
+    private ComboBox<String> statusComboBox;
 
     @FXML
     private ListView<Trip> tripListView;
@@ -39,20 +42,25 @@ public class TripManagementController {
 
         statusComboBox.setItems(
                 FXCollections.observableArrayList(
-                        Trip.TripStatus.values()
+                        Trip.SCHEDULED,
+                        Trip.ARRIVING,
+                        Trip.BOARDING,
+                        Trip.DEPARTED,
+                        Trip.COMPLETED
                 )
         );
 
-        statusComboBox.setValue(
-                Trip.TripStatus.SCHEDULED
-        );
+        statusComboBox.setValue(Trip.SCHEDULED);
     }
 
     @FXML
     private void handleAddTrip() {
 
-        String tripId =
+        String tripIdText =
                 tripIdField.getText().trim();
+
+        Route route =
+                routeComboBox.getValue();
 
         DepartureSchedule schedule =
                 scheduleComboBox.getValue();
@@ -60,7 +68,8 @@ public class TripManagementController {
         String capacityText =
                 capacityField.getText().trim();
 
-        if (tripId.isEmpty()
+        if (tripIdText.isEmpty()
+                || route == null
                 || schedule == null
                 || capacityText.isEmpty()) {
 
@@ -74,6 +83,9 @@ public class TripManagementController {
         }
 
         try {
+
+            Long tripId =
+                    Long.parseLong(tripIdText);
 
             int capacity =
                     Integer.parseInt(capacityText);
@@ -92,20 +104,19 @@ public class TripManagementController {
             Trip trip =
                     new Trip(
                             tripId,
+                            route,
                             schedule,
                             capacity
                     );
 
-            Trip.TripStatus status =
+            String status =
                     statusComboBox.getValue();
 
             if (status != null) {
-                trip.setStatus(status);
+                trip.updateStatus(status);
             }
 
             trips.add(trip);
-
-            schedule.addTrip(trip);
 
             clearFields();
 
@@ -119,8 +130,8 @@ public class TripManagementController {
 
             showAlert(
                     Alert.AlertType.ERROR,
-                    "Invalid Capacity",
-                    "Please enter a valid number."
+                    "Invalid Input",
+                    "Trip ID and capacity must be valid numbers."
             );
         }
     }
@@ -129,10 +140,11 @@ public class TripManagementController {
     private void handleUpdateStatus() {
 
         Trip selectedTrip =
-                tripListView.getSelectionModel()
+                tripListView
+                        .getSelectionModel()
                         .getSelectedItem();
 
-        Trip.TripStatus selectedStatus =
+        String selectedStatus =
                 statusComboBox.getValue();
 
         if (selectedTrip == null
@@ -147,9 +159,7 @@ public class TripManagementController {
             return;
         }
 
-        selectedTrip.setStatus(
-                selectedStatus
-        );
+        selectedTrip.updateStatus(selectedStatus);
 
         tripListView.refresh();
 
@@ -161,25 +171,12 @@ public class TripManagementController {
         );
     }
 
-    private void clearFields() {
-
-        tripIdField.clear();
-
-        capacityField.clear();
-
-        scheduleComboBox.getSelectionModel()
-                .clearSelection();
-
-        statusComboBox.setValue(
-                Trip.TripStatus.SCHEDULED
-        );
-    }
-
     @FXML
     private void handleDeleteTrip() {
 
         Trip selectedTrip =
-                tripListView.getSelectionModel()
+                tripListView
+                        .getSelectionModel()
                         .getSelectedItem();
 
         if (selectedTrip == null) {
@@ -187,13 +184,27 @@ public class TripManagementController {
             showAlert(
                     Alert.AlertType.WARNING,
                     "No Selection",
-                    "Please select a trip."
+                    "Please select a trip to delete."
             );
 
             return;
         }
 
         trips.remove(selectedTrip);
+    }
+
+    private void clearFields() {
+
+        tripIdField.clear();
+        capacityField.clear();
+
+        routeComboBox.getSelectionModel()
+                .clearSelection();
+
+        scheduleComboBox.getSelectionModel()
+                .clearSelection();
+
+        statusComboBox.setValue(Trip.SCHEDULED);
     }
 
     private void showAlert(

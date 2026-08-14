@@ -48,6 +48,83 @@ public class TripManagementController {
         );
     }
 
+    @FXML
+    private void handleAddTrip() {
+
+        String tripId =
+                tripIdField.getText().trim();
+
+        DepartureSchedule schedule =
+                scheduleComboBox.getValue();
+
+        String capacityText =
+                capacityField.getText().trim();
+
+        if (tripId.isEmpty()
+                || schedule == null
+                || capacityText.isEmpty()) {
+
+            showAlert(
+                    Alert.AlertType.WARNING,
+                    "Missing Information",
+                    "Please complete all fields."
+            );
+
+            return;
+        }
+
+        try {
+
+            int capacity =
+                    Integer.parseInt(capacityText);
+
+            if (capacity <= 0) {
+
+                showAlert(
+                        Alert.AlertType.WARNING,
+                        "Invalid Capacity",
+                        "Capacity must be greater than zero."
+                );
+
+                return;
+            }
+
+            Trip trip =
+                    new Trip(
+                            tripId,
+                            schedule,
+                            capacity
+                    );
+
+            Trip.TripStatus status =
+                    statusComboBox.getValue();
+
+            if (status != null) {
+                trip.setStatus(status);
+            }
+
+            trips.add(trip);
+
+            schedule.addTrip(trip);
+
+            clearFields();
+
+            showAlert(
+                    Alert.AlertType.INFORMATION,
+                    "Trip Added",
+                    "Trip was successfully created."
+            );
+
+        } catch (NumberFormatException e) {
+
+            showAlert(
+                    Alert.AlertType.ERROR,
+                    "Invalid Capacity",
+                    "Please enter a valid number."
+            );
+        }
+    }
+
     private void clearFields() {
 
         tripIdField.clear();

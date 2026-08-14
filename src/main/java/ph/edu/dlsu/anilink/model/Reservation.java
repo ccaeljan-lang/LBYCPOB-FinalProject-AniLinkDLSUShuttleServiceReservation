@@ -31,4 +31,7 @@ public class Reservation {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
+    public String getQrPayload() {
+        return qrPayload;
+    }
 }

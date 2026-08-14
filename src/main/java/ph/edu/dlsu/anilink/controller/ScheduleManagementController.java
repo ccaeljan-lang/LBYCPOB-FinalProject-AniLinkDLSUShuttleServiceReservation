@@ -65,6 +65,40 @@ public class ScheduleManagementController {
 
             return;
         }
+
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern(
+                        "yyyy-MM-dd HH:mm"
+                );
+
+        LocalDateTime departureTime =
+                LocalDateTime.parse(
+                        departureTimeText,
+                        formatter
+                );
+
+        int reservationLimit =
+                Integer.parseInt(limitText);
+
+        DepartureSchedule schedule =
+                new DepartureSchedule(
+                        scheduleId,
+                        route,
+                        departureTime,
+                        reservationLimit
+                );
+
+        schedules.add(schedule);
+
+        route.addSchedule(schedule);
+
+        clearFields();
+
+        showAlert(
+                Alert.AlertType.INFORMATION,
+                "Schedule Added",
+                "Departure schedule was successfully added."
+        );
     }
 
     private void clearFields() {

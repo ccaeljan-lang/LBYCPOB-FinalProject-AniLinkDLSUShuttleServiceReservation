@@ -3,6 +3,13 @@ package ph.edu.dlsu.anilink.model;
 import ph.edu.dlsu.anilink.interfaces.Trackable;
 
 public class Trip implements Trackable {
+
+    public static final String SCHEDULED = "SCHEDULED";
+    public static final String ARRIVING = "ARRIVING";
+    public static final String BOARDING = "BOARDING";
+    public static final String DEPARTED = "DEPARTED";
+    public static final String COMPLETED = "COMPLETED";
+
     private Long tripId;
     private Route route;
     private DepartureSchedule schedule;
@@ -19,7 +26,7 @@ public class Trip implements Trackable {
         this.schedule = schedule;
         this.capacity = capacity;
         this.seatsTaken = 0;
-        this.status = "SCHEDULED";
+        this.status = SCHEDULED;
     }
 
     @Override

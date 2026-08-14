@@ -7,13 +7,15 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import ph.edu.dlsu.anilink.model.Reservation;
 
 import java.awt.image.BufferedImage;
-import java.util.UUID;
 
 public class QRService {
 
     public BufferedImage generateQRCode(Reservation reservation) {
-        String payload = reservation != null ? "ANILINK-RES-" + reservation.toString() : UUID.randomUUID().toString();
-        return generateQRCodeImage(payload, 200, 200);
+        if (reservation == null) {
+            return null;
+        }
+
+        return generateQRCodeImage(reservation.getQrPayload(), 200, 200);
     }
 
     public boolean verifyQRCode(String qrPayload) {
@@ -25,14 +27,15 @@ public class QRService {
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
             BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
                     image.setRGB(x, y, bitMatrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
                 }
             }
+
             return image;
         } catch (WriterException e) {
-            e.printStackTrace();
             return null;
         }
     }

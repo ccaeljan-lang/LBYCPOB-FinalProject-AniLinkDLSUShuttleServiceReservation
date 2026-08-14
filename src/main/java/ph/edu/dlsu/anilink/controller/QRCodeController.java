@@ -12,24 +12,26 @@ import ph.edu.dlsu.anilink.service.QRService;
 import java.awt.image.BufferedImage;
 
 public class QRCodeController {
+    @FXML
+    private ImageView qrCode;
 
     @FXML
-    private ImageView qrCodeImageView;
+    private Label reservationCode;
 
     @FXML
-    private Label reservationIdLabel;
+    private Label passengerName;
 
     @FXML
-    private Label tripDetailsLabel;
+    private Label route;
 
     @FXML
-    private Label statusLabel;
+    private Label departureTime;
 
     @FXML
-    private Button generateButton;
+    private Label status;
 
     @FXML
-    private Button backButton;
+    private Button back;
 
     private QRService qrService;
     private Reservation reservation;
@@ -37,44 +39,43 @@ public class QRCodeController {
     @FXML
     private void initialize() {
         qrService = new QRService();
-        statusLabel.setText("");
     }
 
-    @FXML
-    private void handleGenerateQR() {
+    public void setReservation(Reservation reservation) {
+        this.reservation = reservation;
+
         if (reservation == null) {
-            showStatus("No reservation selected.");
+            return;
+        }
+
+        reservationCode.setText("Reservation Code: " + reservation.getReservationId());
+        passengerName.setText("Passenger: " + reservation.getPassenger().getName());
+        route.setText("Route: " + reservation.getTrip().getRoute());
+        departureTime.setText("Departure: " + reservation.getTrip().getSchedule());
+        status.setText("Status: " + reservation.getStatus());
+
+        generateQRCode();
+    }
+
+    private void generateQRCode() {
+        if (reservation == null) {
+            status.setText("Status: No reservation selected");
             return;
         }
 
         BufferedImage bufferedImage = qrService.generateQRCode(reservation);
 
         if (bufferedImage == null) {
-            showStatus("Unable to generate QR code.");
+            status.setText("Status: QR generation failed");
             return;
         }
 
-        Image qrImage = SwingFXUtils.toFXImage(bufferedImage, null);
-
-        qrCodeImageView.setImage(qrImage);
-        showStatus("QR code generated successfully.");
+        Image image = SwingFXUtils.toFXImage(bufferedImage, null);
+        qrCode.setImage(image);
     }
 
     @FXML
     private void handleBack() {
         System.out.println("Returning to reservations...");
-    }
-
-    public void setReservation(Reservation reservation) {
-        this.reservation = reservation;
-
-        if (reservation != null) {
-            reservationIdLabel.setText("Reservation: " + reservation.getReservationId());
-            tripDetailsLabel.setText("Trip: " + reservation.getTrip());
-        }
-    }
-
-    private void showStatus(String message) {
-        statusLabel.setText(message);
     }
 }

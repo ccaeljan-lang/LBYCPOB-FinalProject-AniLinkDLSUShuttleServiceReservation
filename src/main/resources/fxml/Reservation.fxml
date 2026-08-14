@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ph.edu.dlsu.anilink.controller.ReservationController"
+      alignment="CENTER"
+      spacing="15"
+      prefWidth="900"
+      prefHeight="600">
+    <padding>
+        <Insets top="40" right="50" bottom="40" left="50"/>
+    </padding>
+    <Label text="Reserve a Shuttle Trip"/>
+    <ComboBox fx:id="routeSelection" promptText="Select Route" prefWidth="350" maxWidth="350" onAction="#handleRouteSelection"/>
+    <DatePicker fx:id="dateSelection" promptText="Select Date" prefWidth="350" maxWidth="350"/>
+    <ComboBox fx:id="scheduleSelection" promptText="Select Schedule" prefWidth="350" maxWidth="350"/>
+    <Label fx:id="availableSeats" text="Available Seats: --"/>
+    <Label fx:id="tripStatus" text="Trip Status: --"/>
+    <Button fx:id="reserveButton" text="Reserve" onAction="#handleReserve" prefWidth="350" maxWidth="350"/>
+    <Label fx:id="reservationMessage" wrapText="true"/>
+</VBox>

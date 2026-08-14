@@ -65,6 +65,27 @@ public class LineManagementController {
         );
     }
 
+    @FXML
+    private void handleDeleteLine() {
+
+        String selectedLine =
+                lineListView.getSelectionModel()
+                        .getSelectedItem();
+
+        if (selectedLine == null) {
+
+            showAlert(
+                    Alert.AlertType.WARNING,
+                    "No Selection",
+                    "Please select a line to delete."
+            );
+
+            return;
+        }
+
+        lines.remove(selectedLine);
+    }
+
     private void clearFields() {
 
         lineNameField.clear();

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ph.edu.dlsu.anilink.controller.AdminDashboardController"
+      alignment="CENTER"
+      spacing="25"
+      prefWidth="1000"
+      prefHeight="650">
+    <padding>
+        <Insets top="40" right="50" bottom="40" left="50"/>
+    </padding>
+    <Label text="Admin Dashboard"/>
+    <GridPane alignment="CENTER" hgap="20" vgap="20">
+        <VBox alignment="CENTER" spacing="10" prefWidth="250" prefHeight="120">
+            <Label text="Total Users"/>
+            <Label fx:id="totalUsers" text="0"/>
+        </VBox>
+        <VBox alignment="CENTER" spacing="10" prefWidth="250" prefHeight="120" GridPane.columnIndex="1">
+            <Label text="Today's Trips"/>
+            <Label fx:id="todaysTrips" text="0"/>
+        </VBox>
+        <VBox alignment="CENTER" spacing="10" prefWidth="250" prefHeight="120" GridPane.rowIndex="1">
+            <Label text="Active Trips"/>
+            <Label fx:id="activeTrips" text="0"/>
+        </VBox>
+        <VBox alignment="CENTER" spacing="10" prefWidth="250" prefHeight="120" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <Label text="Reservations"/>
+            <Label fx:id="reservations" text="0"/>
+        </VBox>
+        <VBox alignment="CENTER" spacing="10" prefWidth="250" prefHeight="120" GridPane.columnIndex="2">
+            <Label text="Available Seats"/>
+            <Label fx:id="availableSeats" text="0"/>
+        </VBox>
+    </GridPane>
+</VBox>

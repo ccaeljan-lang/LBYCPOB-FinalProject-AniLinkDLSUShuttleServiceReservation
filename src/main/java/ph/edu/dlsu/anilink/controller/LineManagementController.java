@@ -35,6 +35,19 @@ public class LineManagementController {
         String locationA = locationAField.getText().trim();
         String locationB = locationBField.getText().trim();
 
+        if (lineName.isEmpty()
+                || locationA.isEmpty()
+                || locationB.isEmpty()) {
+
+            showAlert(
+                    Alert.AlertType.WARNING,
+                    "Missing Information",
+                    "Please fill in all fields."
+            );
+
+            return;
+        }
+
         String line =
                 lineName
                         + ": "
@@ -43,6 +56,13 @@ public class LineManagementController {
                         + locationB;
 
         lines.add(line);
+        clearFields();
+
+        showAlert(
+                Alert.AlertType.INFORMATION,
+                "Line Added",
+                "The line was successfully added."
+        );
     }
 
     private void clearFields() {

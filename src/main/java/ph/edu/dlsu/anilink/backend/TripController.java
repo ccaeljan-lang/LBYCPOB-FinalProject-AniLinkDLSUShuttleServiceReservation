@@ -48,6 +48,46 @@ public class TripController {
                 .body(trip);
     }
 
+    // UPDATE trip status
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Trip> updateTripStatus(
+            @PathVariable Long id,
+            @RequestParam String status) {
+
+        for (Trip trip : trips) {
+
+            if (trip.getTripId().equals(id)) {
+
+                trip.updateStatus(status);
+
+                return ResponseEntity.ok(trip);
+            }
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+
+    // UPDATE trip location
+    @PutMapping("/{id}/location")
+    public ResponseEntity<Trip> updateTripLocation(
+            @PathVariable Long id,
+            @RequestParam double lat,
+            @RequestParam double lng) {
+
+        for (Trip trip : trips) {
+
+            if (trip.getTripId().equals(id)) {
+
+                trip.updateLocation(lat, lng);
+
+                return ResponseEntity.ok(trip);
+            }
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
     // DELETE trip
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTrip(

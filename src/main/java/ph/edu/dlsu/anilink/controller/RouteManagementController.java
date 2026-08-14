@@ -38,6 +38,59 @@ public class RouteManagementController {
         routeListView.setItems(routes);
     }
 
+    @FXML
+    private void handleAddRoute() {
+
+        String routeId =
+                routeIdField.getText().trim();
+
+        String category =
+                categoryField.getText().trim();
+
+        String line =
+                lineField.getText().trim();
+
+        String origin =
+                originField.getText().trim();
+
+        String destination =
+                destinationField.getText().trim();
+
+        if (routeId.isEmpty()
+                || category.isEmpty()
+                || line.isEmpty()
+                || origin.isEmpty()
+                || destination.isEmpty()) {
+
+            showAlert(
+                    Alert.AlertType.WARNING,
+                    "Missing Information",
+                    "Please complete all fields."
+            );
+
+            return;
+        }
+
+        Route route =
+                new Route(
+                        routeId,
+                        category,
+                        line,
+                        origin,
+                        destination
+                );
+
+        routes.add(route);
+
+        clearFields();
+
+        showAlert(
+                Alert.AlertType.INFORMATION,
+                "Route Added",
+                "Route was successfully added."
+        );
+    }
+
     private void clearFields() {
 
         routeIdField.clear();

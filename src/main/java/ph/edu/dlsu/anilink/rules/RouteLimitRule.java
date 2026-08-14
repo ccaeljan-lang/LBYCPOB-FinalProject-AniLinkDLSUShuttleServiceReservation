@@ -15,7 +15,29 @@ public class RouteLimitRule implements BookingRule {
             return false;
         }
 
-        return true; // Limit logic to follow
+        Passenger passenger = (Passenger) user;
+
+        int bookingCount = 0;
+
+        String targetRouteId = trip
+                .getDepartureSchedule()
+                .getRoute()
+                .getRouteId();
+
+        for (Reservation reservation : passenger.getReservations()) {
+
+            String existingRouteId = reservation
+                    .getTrip()
+                    .getDepartureSchedule()
+                    .getRoute()
+                    .getRouteId();
+
+            if (existingRouteId.equals(targetRouteId)) {
+                bookingCount++;
+            }
+        }
+
+        return bookingCount < MAX_ROUTE_BOOKINGS;
     }
 
     @Override

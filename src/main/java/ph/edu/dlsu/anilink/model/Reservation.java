@@ -15,6 +15,12 @@ public class Reservation {
         this.passenger = passenger;
         this.trip = trip;
         this.createdAt = LocalDateTime.now();
+
+        // Default status
+        this.status = "WAITLISTED";
+    }
+    public String getStatus() {
+        return status;
     }
     public Passenger getPassenger() {
         return passenger;

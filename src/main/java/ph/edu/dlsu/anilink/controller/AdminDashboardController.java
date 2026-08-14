@@ -4,28 +4,31 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 public class AdminDashboardController {
+    @FXML
+    private Label totalUsers;
 
     @FXML
-    private Label totalUsersLabel;
+    private Label todaysTrips;
 
     @FXML
-    private Label todaysTripsLabel;
+    private Label activeTrips;
 
     @FXML
-    private Label activeTripsLabel;
+    private Label reservations;
 
     @FXML
-    private Label reservationsLabel;
-
-    @FXML
-    private Label availableSeatsLabel;
+    private Label availableSeats;
 
     @FXML
     private void initialize() {
-        totalUsersLabel.setText("Total Users: --");
-        todaysTripsLabel.setText("Today's Trips: --");
-        activeTripsLabel.setText("Active Trips: --");
-        reservationsLabel.setText("Reservations: --");
-        availableSeatsLabel.setText("Available Seats: --");
+        loadDashboardData();
+    }
+
+    private void loadDashboardData() {
+        totalUsers.setText("0");
+        todaysTrips.setText("0");
+        activeTrips.setText("0");
+        reservations.setText("0");
+        availableSeats.setText("0");
     }
 }

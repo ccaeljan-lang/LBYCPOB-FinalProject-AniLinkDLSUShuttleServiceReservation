@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="ph.edu.dlsu.anilink.controller.MyReservationsController"
+      alignment="CENTER"
+      spacing="20"
+      prefWidth="1000"
+      prefHeight="650">
+    <padding>
+        <Insets top="40" right="50" bottom="40" left="50"/>
+    </padding>
+    <Label text="My Reservations"/>
+    <TableView fx:id="reservationTable" prefWidth="850" prefHeight="400" maxWidth="850">
+        <columns>
+            <TableColumn fx:id="reservationCodeColumn" text="Reservation Code" prefWidth="170"/>
+            <TableColumn fx:id="routeColumn" text="Route" prefWidth="180"/>
+            <TableColumn fx:id="dateColumn" text="Date" prefWidth="160"/>
+            <TableColumn fx:id="departureColumn" text="Departure" prefWidth="160"/>
+            <TableColumn fx:id="statusColumn" text="Status" prefWidth="160"/>
+        </columns>
+    </TableView>
+</VBox>

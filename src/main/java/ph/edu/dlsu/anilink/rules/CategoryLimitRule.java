@@ -2,6 +2,7 @@ package ph.edu.dlsu.anilink.rules;
 
 import ph.edu.dlsu.anilink.interfaces.BookingRule;
 import ph.edu.dlsu.anilink.model.Passenger;
+import ph.edu.dlsu.anilink.model.Reservation;
 import ph.edu.dlsu.anilink.model.Trip;
 import ph.edu.dlsu.anilink.model.User;
 
@@ -16,7 +17,15 @@ public class CategoryLimitRule implements BookingRule {
             return false;
         }
 
-        return true; // Limit logic to follow
+        Passenger passenger = (Passenger) user;
+
+        int bookingCount = 0;
+
+        for (Reservation reservation : passenger.getReservations()) {
+            bookingCount++;
+        }
+
+        return bookingCount < MAX_CATEGORY_BOOKINGS;
     }
 
     @Override

@@ -1,80 +1,35 @@
 package ph.edu.dlsu.anilink.controller;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 
 public class MyReservationsController {
 
     @FXML
-    private ListView<String> reservationList;
+    private TableView<?> reservationTable;
 
     @FXML
-    private Label reservationDetailsLabel;
+    private TableColumn<?, ?> reservationCodeColumn;
 
     @FXML
-    private Label messageLabel;
+    private TableColumn<?, ?> routeColumn;
 
     @FXML
-    private Button viewButton;
+    private TableColumn<?, ?> dateColumn;
 
     @FXML
-    private Button cancelButton;
+    private TableColumn<?, ?> departureColumn;
 
     @FXML
-    private Button backButton;
+    private TableColumn<?, ?> statusColumn;
 
     @FXML
     private void initialize() {
         loadReservations();
-        messageLabel.setText("");
-        reservationDetailsLabel.setText("Select a reservation to view its details.");
     }
 
     private void loadReservations() {
-        reservationList.getItems().clear();
-
-        reservationList.getItems().addAll(
-                "Manila → Laguna | August 15, 2026 | 7:00 AM",
-                "Laguna → Manila | August 17, 2026 | 5:00 PM"
-        );
-    }
-
-    @FXML
-    private void handleViewReservation() {
-        String selectedReservation = reservationList.getSelectionModel().getSelectedItem();
-
-        if (selectedReservation == null) {
-            showMessage("Please select a reservation.");
-            return;
-        }
-
-        reservationDetailsLabel.setText("Reservation Details:\n" + selectedReservation + "\nStatus: CONFIRMED");
-        showMessage("");
-    }
-
-    @FXML
-    private void handleCancelReservation() {
-        String selectedReservation = reservationList.getSelectionModel().getSelectedItem();
-
-        if (selectedReservation == null) {
-            showMessage("Please select a reservation.");
-            return;
-        }
-
-        reservationList.getItems().remove(selectedReservation);
-        reservationDetailsLabel.setText("Select a reservation to view its details.");
-
-        showMessage("Reservation cancelled successfully.");
-    }
-
-    @FXML
-    private void handleBack() {
-        System.out.println("Returning to passenger dashboard...");
-    }
-
-    private void showMessage(String message) {
-        messageLabel.setText(message);
+        reservationTable.getItems().clear();
     }
 }

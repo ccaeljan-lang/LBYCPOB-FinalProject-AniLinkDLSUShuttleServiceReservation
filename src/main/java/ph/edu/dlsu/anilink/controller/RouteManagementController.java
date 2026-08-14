@@ -15,12 +15,6 @@ public class RouteManagementController {
     private TextField routeIdField;
 
     @FXML
-    private TextField categoryField;
-
-    @FXML
-    private TextField lineField;
-
-    @FXML
     private TextField originField;
 
     @FXML
@@ -34,31 +28,17 @@ public class RouteManagementController {
 
     @FXML
     public void initialize() {
-
         routeListView.setItems(routes);
     }
 
     @FXML
     private void handleAddRoute() {
 
-        String routeId =
-                routeIdField.getText().trim();
+        String routeIdText = routeIdField.getText().trim();
+        String origin = originField.getText().trim();
+        String destination = destinationField.getText().trim();
 
-        String category =
-                categoryField.getText().trim();
-
-        String line =
-                lineField.getText().trim();
-
-        String origin =
-                originField.getText().trim();
-
-        String destination =
-                destinationField.getText().trim();
-
-        if (routeId.isEmpty()
-                || category.isEmpty()
-                || line.isEmpty()
+        if (routeIdText.isEmpty()
                 || origin.isEmpty()
                 || destination.isEmpty()) {
 
@@ -71,24 +51,34 @@ public class RouteManagementController {
             return;
         }
 
-        Route route =
-                new Route(
-                        routeId,
-                        category,
-                        line,
-                        origin,
-                        destination
-                );
+        try {
 
-        routes.add(route);
+            Long routeId = Long.parseLong(routeIdText);
 
-        clearFields();
+            Route route = new Route(
+                    routeId,
+                    origin,
+                    destination
+            );
 
-        showAlert(
-                Alert.AlertType.INFORMATION,
-                "Route Added",
-                "Route was successfully added."
-        );
+            routes.add(route);
+
+            clearFields();
+
+            showAlert(
+                    Alert.AlertType.INFORMATION,
+                    "Route Added",
+                    "Route was successfully added."
+            );
+
+        } catch (NumberFormatException e) {
+
+            showAlert(
+                    Alert.AlertType.ERROR,
+                    "Invalid Route ID",
+                    "Route ID must be a valid number."
+            );
+        }
     }
 
     @FXML
@@ -115,8 +105,6 @@ public class RouteManagementController {
     private void clearFields() {
 
         routeIdField.clear();
-        categoryField.clear();
-        lineField.clear();
         originField.clear();
         destinationField.clear();
     }

@@ -5,4 +5,5 @@ import ph.edu.dlsu.anilink.model.User;
 
 public class BookingRule {
     boolean validate(User user, Trip trip);
+    String getErrorMessage();
 }

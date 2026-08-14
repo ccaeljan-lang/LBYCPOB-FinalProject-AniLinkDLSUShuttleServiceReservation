@@ -11,8 +11,9 @@ import javafx.scene.control.TextField;
 import ph.edu.dlsu.anilink.model.DepartureSchedule;
 import ph.edu.dlsu.anilink.model.Route;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class ScheduleManagementController {
 
@@ -26,7 +27,7 @@ public class ScheduleManagementController {
     private TextField departureTimeField;
 
     @FXML
-    private TextField reservationLimitField;
+    private TextField capacityField;
 
     @FXML
     private ListView<DepartureSchedule> scheduleListView;
@@ -36,14 +37,13 @@ public class ScheduleManagementController {
 
     @FXML
     public void initialize() {
-
         scheduleListView.setItems(schedules);
     }
 
     @FXML
     private void handleAddSchedule() {
 
-        String scheduleId =
+        String scheduleIdText =
                 scheduleIdField.getText().trim();
 
         Route route =
@@ -52,13 +52,13 @@ public class ScheduleManagementController {
         String departureTimeText =
                 departureTimeField.getText().trim();
 
-        String limitText =
-                reservationLimitField.getText().trim();
+        String capacityText =
+                capacityField.getText().trim();
 
-        if (scheduleId.isEmpty()
+        if (scheduleIdText.isEmpty()
                 || route == null
                 || departureTimeText.isEmpty()
-                || limitText.isEmpty()) {
+                || capacityText.isEmpty()) {
 
             showAlert(
                     Alert.AlertType.WARNING,
@@ -71,26 +71,27 @@ public class ScheduleManagementController {
 
         try {
 
-            DateTimeFormatter formatter =
-                    DateTimeFormatter.ofPattern(
-                            "yyyy-MM-dd HH:mm"
-                    );
+            Long scheduleId =
+                    Long.parseLong(scheduleIdText);
 
-            LocalDateTime departureTime =
-                    LocalDateTime.parse(
+            DateTimeFormatter formatter =
+                    DateTimeFormatter.ofPattern("HH:mm");
+
+            LocalTime departureTime =
+                    LocalTime.parse(
                             departureTimeText,
                             formatter
                     );
 
-            int reservationLimit =
-                    Integer.parseInt(limitText);
+            int capacity =
+                    Integer.parseInt(capacityText);
 
-            if (reservationLimit <= 0) {
+            if (capacity <= 0) {
 
                 showAlert(
                         Alert.AlertType.WARNING,
-                        "Invalid Limit",
-                        "Reservation limit must be greater than zero."
+                        "Invalid Capacity",
+                        "Capacity must be greater than zero."
                 );
 
                 return;
@@ -101,12 +102,10 @@ public class ScheduleManagementController {
                             scheduleId,
                             route,
                             departureTime,
-                            reservationLimit
+                            capacity
                     );
 
             schedules.add(schedule);
-
-            route.addSchedule(schedule);
 
             clearFields();
 
@@ -115,13 +114,21 @@ public class ScheduleManagementController {
                     "Schedule Added",
                     "Departure schedule was successfully added."
             );
-        } catch (Exception e) {
+
+        } catch (NumberFormatException e) {
 
             showAlert(
                     Alert.AlertType.ERROR,
                     "Invalid Input",
-                    "Use this date format:\n"
-                            + "yyyy-MM-dd HH:mm"
+                    "Schedule ID and capacity must be valid numbers."
+            );
+
+        } catch (DateTimeParseException e) {
+
+            showAlert(
+                    Alert.AlertType.ERROR,
+                    "Invalid Time",
+                    "Please use the format HH:mm.\nExample: 08:30"
             );
         }
     }
@@ -130,7 +137,8 @@ public class ScheduleManagementController {
     private void handleDeleteSchedule() {
 
         DepartureSchedule selectedSchedule =
-                scheduleListView.getSelectionModel()
+                scheduleListView
+                        .getSelectionModel()
                         .getSelectedItem();
 
         if (selectedSchedule == null) {
@@ -138,7 +146,7 @@ public class ScheduleManagementController {
             showAlert(
                     Alert.AlertType.WARNING,
                     "No Selection",
-                    "Please select a schedule."
+                    "Please select a schedule to delete."
             );
 
             return;
@@ -150,10 +158,8 @@ public class ScheduleManagementController {
     private void clearFields() {
 
         scheduleIdField.clear();
-
         departureTimeField.clear();
-
-        reservationLimitField.clear();
+        capacityField.clear();
 
         routeComboBox.getSelectionModel()
                 .clearSelection();

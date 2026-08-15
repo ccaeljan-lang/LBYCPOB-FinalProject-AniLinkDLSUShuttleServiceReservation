@@ -6,9 +6,18 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import ph.edu.dlsu.anilink.model.User;
+import ph.edu.dlsu.anilink.service.SupabaseService;
 
 @Controller
 public class LoginController {
+    private final SupabaseService supabaseService;
+
+    @Autowired
+    public LoginController(SupabaseService supabaseService) {
+        this.supabaseService = supabaseService;
+    }
 
     @FXML
     private TextField emailField;
@@ -24,6 +33,7 @@ public class LoginController {
 
     @FXML
     private void handleLogin() {
+
         String email = emailField.getText().trim();
         String password = passwordField.getText();
 
@@ -37,7 +47,38 @@ public class LoginController {
             return;
         }
 
-        showMessage("Login successful.");
+        try {
+
+            User user = supabaseService.findUserByEmail(email);
+
+            if (user == null) {
+                showMessage("Invalid email or password.");
+                return;
+            }
+
+            if (!user.getPassword().equals(password)) {
+                showMessage("Invalid email or password.");
+                return;
+            }
+
+            showMessage(
+                    "Login successful. Welcome, "
+                            + user.getName()
+                            + "!"
+            );
+
+            System.out.println(
+                    "Logged in as: " + user.getRole()
+            );
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            showMessage(
+                    "Unable to connect to the database."
+            );
+        }
     }
 
     private boolean isValidDLSUEmail(String email) {

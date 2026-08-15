@@ -225,4 +225,23 @@ public class ScheduleManagementController {
             );
         }
     }
+
+    private void loadSchedules() {
+        try {
+            String response = supabaseService.getSchedules();
+
+            List<DepartureSchedule> scheduleList =
+                    objectMapper.readValue(
+                            response,
+                            new TypeReference<List<DepartureSchedule>>() {}
+                    );
+            schedules.setAll(scheduleList);
+        } catch (Exception e) {
+            showAlert(
+                    Alert.AlertType.ERROR,
+                    "Database Error",
+                    "Unable to load schedules from Supabase."
+            );
+        }
+    }
 }

@@ -1,8 +1,13 @@
-package ph.edu.dlsu.anilink.service;
+private final RestClient restClient;
 
-import org.springframework.stereotype.Service;
+public SupabaseService(
+        @Value("${app.supabase.url}") String supabaseUrl,
+        @Value("${app.supabase.secret-key}") String secretKey) {
 
-@Service
-public class SupabaseService {
-
+    this.restClient = RestClient.builder()
+            .baseUrl(supabaseUrl + "/rest/v1")
+            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .defaultHeader("apikey", secretKey)
+            .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + secretKey)
+            .build();
 }

@@ -2,32 +2,75 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
 
-<VBox xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="ph.edu.dlsu.anilink.controller.TripDetailsController"
-      alignment="CENTER"
-      spacing="20"
-      prefWidth="1000"
-      prefHeight="650">
-    <padding>
-        <Insets top="40" right="50" bottom="40" left="50"/>
-    </padding>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ph.edu.dlsu.anilink.controller.TripDetailsController"
+            prefWidth="1000" prefHeight="650">
 
-    <Label text="Trip Details" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+    <stylesheets>
+        <URL value="@../css/main.css" />
+    </stylesheets>
 
-    <VBox alignment="CENTER_LEFT" spacing="10" maxWidth="350">
-        <Label fx:id="tripIdLabel" text="Trip ID: --"/>
-        <Label fx:id="routeLabel" text="Route: --"/>
-        <Label fx:id="scheduleLabel" text="Schedule: --"/>
-        <Label fx:id="capacityLabel" text="Capacity: 0/0"/>
-        <Label fx:id="statusLabel" text="Status: SCHEDULED"/>
-    </VBox>
+    <top>
+        <HBox styleClass="top-nav" alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 10 20;">
+            <ImageView fitHeight="24" preserveRatio="true">
+                <image>
+                    <Image url="@../images/nologotitle.png" />
+                </image>
+            </ImageView>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label text="Welcome, Driver" style="-fx-text-fill: white; -fx-font-size: 13px;"/>
+            <Label text="🚌" style="-fx-text-fill: white; -fx-font-size: 20px;"/>
+        </HBox>
+    </top>
 
-    <HBox alignment="CENTER" spacing="15">
-        <Button fx:id="viewPassengersButton" text="View Passengers" onAction="#handleViewPassengers" prefWidth="180"/>
-        <Button fx:id="backButton" text="Back" onAction="#handleBack" prefWidth="180"/>
-    </HBox>
-</VBox>
+    <left>
+        <VBox prefWidth="200" spacing="5" styleClass="sidebar-white">
+            <Button text="Dashboard" prefWidth="180" styleClass="sidebar-btn"/>
+            <Button text="Trip Details" prefWidth="180" styleClass="sidebar-btn, sidebar-btn-active"/>
+            <Button text="Scan QR Code" prefWidth="180" styleClass="sidebar-btn"/>
+            <Region VBox.vgrow="ALWAYS" />
+            <Button text="Logout" prefWidth="180" styleClass="sidebar-btn"/>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="20" style="-fx-background-color: #FFFFFF;" alignment="CENTER">
+            <padding>
+                <Insets top="30" right="40" bottom="30" left="40"/>
+            </padding>
+
+            <VBox alignment="CENTER" spacing="15" styleClass="dashboard-card" maxWidth="500">
+                <padding>
+                    <Insets top="40" right="40" bottom="40" left="40"/>
+                </padding>
+
+                <Label text="Trip Details" styleClass="section-title"/>
+
+                <VBox alignment="CENTER_LEFT" spacing="12" style="-fx-background-color: #F8F9FA; -fx-padding: 20; -fx-background-radius: 8; -fx-min-width: 350;">
+                    <Label fx:id="tripIdLabel" text="Trip ID: --" style="-fx-font-weight: bold;"/>
+                    <Label fx:id="routeLabel" text="Route: --"/>
+                    <Label fx:id="scheduleLabel" text="Schedule: --"/>
+                    <Label fx:id="capacityLabel" text="Capacity: 0/0"/>
+
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Status:"/>
+                        <Label fx:id="statusLabel" text="SCHEDULED" styleClass="status-badge, status-scheduled"/>
+                    </HBox>
+                </VBox>
+
+                <HBox alignment="CENTER" spacing="15" style="-fx-padding: 20 0 0 0;">
+                    <Button fx:id="viewPassengersButton" text="View Passengers" onAction="#handleViewPassengers" prefWidth="180" styleClass="primary-button"/>
+                    <Button fx:id="backButton" text="Back" onAction="#handleBack" prefWidth="180" styleClass="secondary-button"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

@@ -1,28 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
 
-<VBox xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="ph.edu.dlsu.anilink.controller.MyReservationsController"
-      alignment="CENTER"
-      spacing="20"
-      prefWidth="1000"
-      prefHeight="650">
-    <padding>
-        <Insets top="40" right="50" bottom="40" left="50"/>
-    </padding>
-    <Label text="My Reservations"/>
-    <TableView fx:id="reservationTable" prefWidth="850" prefHeight="400" maxWidth="850">
-        <columns>
-            <TableColumn fx:id="reservationCodeColumn" text="Reservation Code" prefWidth="170"/>
-            <TableColumn fx:id="routeColumn" text="Route" prefWidth="180"/>
-            <TableColumn fx:id="dateColumn" text="Date" prefWidth="160"/>
-            <TableColumn fx:id="departureColumn" text="Departure" prefWidth="160"/>
-            <TableColumn fx:id="statusColumn" text="Status" prefWidth="160"/>
-        </columns>
-    </TableView>
-</VBox>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ph.edu.dlsu.anilink.controller.MyReservationsController"
+            prefWidth="1000" prefHeight="650">
+
+    <stylesheets>
+        <URL value="@../css/main.css" />
+    </stylesheets>
+
+    <top>
+        <HBox styleClass="top-nav" alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 10 20;">
+            <ImageView fitHeight="24" preserveRatio="true">
+                <image>
+                    <Image url="@../images/nologotitle.png" />
+                </image>
+            </ImageView>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label text="Welcome, Juan Dela Cruz" style="-fx-text-fill: white; -fx-font-size: 13px;"/>
+            <Label text="👤" style="-fx-text-fill: white; -fx-font-size: 20px;"/>
+        </HBox>
+    </top>
+
+    <left>
+        <VBox prefWidth="200" spacing="5" styleClass="sidebar-white">
+            <Button text="Home" prefWidth="180" styleClass="sidebar-btn"/>
+            <Button text="Reservations" prefWidth="180" styleClass="sidebar-btn"/>
+            <Button text="Trip History" prefWidth="180" styleClass="sidebar-btn, sidebar-btn-active"/>
+            <Button text="Profile" prefWidth="180" styleClass="sidebar-btn"/>
+            <Region VBox.vgrow="ALWAYS" />
+            <Button text="Logout" prefWidth="180" styleClass="sidebar-btn"/>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="15" style="-fx-background-color: #FFFFFF;">
+            <padding>
+                <Insets top="30" right="40" bottom="30" left="40"/>
+            </padding>
+
+            <Label text="Trip History &amp; Reservations" styleClass="section-title"/>
+
+            <VBox styleClass="dashboard-card" VBox.vgrow="ALWAYS">
+                <TableView fx:id="reservationTable" prefWidth="700" VBox.vgrow="ALWAYS" style="-fx-background-color: transparent; -fx-border-color: #E0E0E0; -fx-border-radius: 5;">
+                    <columns>
+                        <TableColumn fx:id="reservationCodeColumn" text="Reservation Code" prefWidth="150"/>
+                        <TableColumn fx:id="routeColumn" text="Route" prefWidth="180"/>
+                        <TableColumn fx:id="dateColumn" text="Date" prefWidth="120"/>
+                        <TableColumn fx:id="departureColumn" text="Departure" prefWidth="120"/>
+                        <TableColumn fx:id="statusColumn" text="Status" prefWidth="120"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

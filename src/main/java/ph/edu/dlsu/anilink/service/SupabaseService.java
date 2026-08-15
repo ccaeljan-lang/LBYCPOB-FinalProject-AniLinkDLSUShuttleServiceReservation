@@ -103,13 +103,6 @@ public class SupabaseService {
         return field.asText();
     }
 
-    public String getRoutes() {
-        return restClient.get()
-                .uri("/routes?select=*")
-                .retrieve()
-                .body(String.class);
-    }
-
     public String createRoute(Route route) {
         return restClient.post()
                 .uri("/routes")
@@ -179,13 +172,6 @@ public class SupabaseService {
                 .toBodilessEntity();
     }
 
-    public String getSchedules() {
-        return restClient.get()
-                .uri("/departure_schedules?select=*")
-                .retrieve()
-                .body(String.class);
-    }
-
     public String createSchedule(DepartureSchedule schedule) {
         return restClient.post()
                 .uri("/departure_schedules")
@@ -206,5 +192,19 @@ public class SupabaseService {
                 .uri("/departure_schedules?id=eq." + scheduleId)
                 .retrieve()
                 .toBodilessEntity();
+    }
+
+    public String getRoutes() {
+        return restClient.get()
+                .uri("/routes?select=*")
+                .retrieve()
+                .body(String.class);
+    }
+
+    public String getSchedules() {
+        return restClient.get()
+                .uri("/departure_schedules?select=*")
+                .retrieve()
+                .body(String.class);
     }
 }

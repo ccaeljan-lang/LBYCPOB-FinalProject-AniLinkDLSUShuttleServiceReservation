@@ -21,4 +21,18 @@ public class SupabaseService {
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + secretKey)
                 .build();
     }
+
+    public String getRoutes() {
+        return restClient.get()
+                .uri("/routes?select=*")
+                .retrieve()
+                .body(String.class);
+    }
+
+    public String getTrips() {
+        return restClient.get()
+                .uri("/trips?select=*")
+                .retrieve()
+                .body(String.class);
+    }
 }

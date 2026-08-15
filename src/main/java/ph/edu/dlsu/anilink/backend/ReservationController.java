@@ -1,11 +1,11 @@
 package ph.edu.dlsu.anilink.backend;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ph.edu.dlsu.anilink.model.Passenger;
 import ph.edu.dlsu.anilink.model.Reservation;
+import ph.edu.dlsu.anilink.model.Trip;
 import ph.edu.dlsu.anilink.service.ReservationService;
 
 import java.util.ArrayList;
@@ -24,13 +24,11 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
-    // GET all reservations
     @GetMapping
     public List<Reservation> getAllReservations() {
         return reservations;
     }
 
-    // GET reservation by ID
     @GetMapping("/{id}")
     public ResponseEntity<Reservation> getReservationById(
             @PathVariable Long id) {
@@ -43,5 +41,57 @@ public class ReservationController {
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+    // CREATE reservation
+    @PostMapping
+    public ResponseEntity<Reservation> createReservation(
+            @RequestParam Long reservationId,
+            @RequestBody ReservationRequest request) {
+
+        Reservation reservation =
+                reservationService.createReservation(
+                        reservationId,
+                        request.passenger(),
+                        request.trip()
+                );
+
+        if (reservation == null) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .build();
+        }
+
+        reservations.add(reservation);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(reservation);
+    }
+
+    // CANCEL reservation
+    @PutMapping("/{id}/cancel")
+    public ResponseEntity<Reservation> cancelReservation(
+            @PathVariable Long id) {
+
+        for (Reservation reservation : reservations) {
+
+            if (reservation.getReservationId().equals(id)) {
+
+                reservation.cancel();
+
+                reservation.getTrip().removePassenger();
+
+                return ResponseEntity.ok(reservation);
+            }
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
+    public record ReservationRequest(
+            Passenger passenger,
+            Trip trip
+    ) {
     }
 }

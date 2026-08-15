@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import ph.edu.dlsu.anilink.model.Route;
 
 @Service
 public class SupabaseService {
@@ -28,31 +29,26 @@ public class SupabaseService {
                 .body(String.class);
     }
 
-    public String getTrips() {
-        return restClient.get()
-                .uri("/trips?select=*")
+    public String createRoute(Route route) {
+        return restClient.post()
+                .uri("/routes")
+                .body(route)
                 .retrieve()
                 .body(String.class);
     }
 
-    public String getReservations() {
-        return restClient.get()
-                .uri("/reservations?select=*")
+    public void updateRoute(Route route) {
+        restClient.patch()
+                .uri("/routes?route_id=eq." + route.getRouteId())
+                .body(route)
                 .retrieve()
-                .body(String.class);
+                .toBodilessEntity();
     }
 
-    public String getUsers() {
-        return restClient.get()
-                .uri("/users?select=*")
+    public void deleteRoute(Long routeId) {
+        restClient.delete()
+                .uri("/routes?route_id=eq." + routeId)
                 .retrieve()
-                .body(String.class);
-    }
-
-    public String getSchedules() {
-        return restClient.get()
-                .uri("/departure_schedules?select=*")
-                .retrieve()
-                .body(String.class);
+                .toBodilessEntity();
     }
 }

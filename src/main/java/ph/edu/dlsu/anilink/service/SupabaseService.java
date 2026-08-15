@@ -128,4 +128,11 @@ public class SupabaseService {
                 .retrieve()
                 .toBodilessEntity();
     }
+
+    public String getUsers() {
+        return restClient.get()
+                .uri("/users?select=*")
+                .retrieve()
+                .body(String.class);
+    }
 }

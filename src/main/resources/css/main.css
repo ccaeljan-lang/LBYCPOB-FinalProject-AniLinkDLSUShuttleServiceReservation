@@ -60,3 +60,74 @@
 .secondary-button:hover {
     -fx-background-color: #F0F0F0;
 }
+
+/* Top Navigation Bar */
+.top-nav {
+    -fx-background-color: #0d5c36; /* DLSU Green */
+    -fx-padding: 15 30;
+}
+
+/* White Sidebar */
+.sidebar-white {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: transparent #E0E0E0 transparent transparent;
+    -fx-border-width: 1px;
+    -fx-padding: 20 10;
+}
+
+.sidebar-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #333333;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 12 20;
+    -fx-cursor: hand;
+    -fx-background-radius: 8;
+}
+
+.sidebar-btn:hover {
+    -fx-background-color: #F0F0F0;
+}
+
+.sidebar-btn-active {
+    -fx-background-color: #E8F5E9; /* Light Green */
+    -fx-text-fill: #0d5c36;
+}
+
+/* Section Titles */
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0d5c36;
+}
+
+/* Data Table Headers */
+.table-header {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000;
+    -fx-padding: 10 15;
+    -fx-background-color: #F8F9FA;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 8 8 0 0;
+    -fx-background-radius: 8 8 0 0;
+}
+
+/* Small Action Buttons */
+.btn-sm-primary {
+    -fx-background-color: #0d5c36;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-padding: 5 15;
+    -fx-cursor: hand;
+}
+
+.btn-sm-outline {
+    -fx-background-color: transparent;
+    -fx-text-fill: #0d5c36;
+    -fx-border-color: #0d5c36;
+    -fx-border-radius: 5;
+    -fx-padding: 5 15;
+    -fx-cursor: hand;
+}

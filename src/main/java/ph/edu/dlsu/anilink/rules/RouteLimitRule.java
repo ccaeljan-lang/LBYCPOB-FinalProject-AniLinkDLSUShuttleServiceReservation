@@ -11,33 +11,21 @@ public class RouteLimitRule implements BookingRule {
 
     @Override
     public boolean validate(User user, Trip trip) {
-
-        // Rule only applies to passengers
-        if (!(user instanceof Passenger)) {
+        if (!(user instanceof Passenger) || trip == null || trip.getRoute() == null) {
             return false;
         }
 
         Passenger passenger = (Passenger) user;
-
+        Long targetRouteId = trip.getRoute().getRouteId();
         int bookingCount = 0;
 
-        String targetRouteId = trip
-                .getDepartureSchedule()
-                .getRoute()
-                .getRouteId();
+        for (Reservation reservation : passenger.getReservationHistory()) {
+            if (reservation == null || reservation.getTrip() == null || reservation.getTrip().getRoute() == null) {
+                continue;
+            }
 
-        for (Reservation reservation : passenger.getReservations()) {
-
-            String existingRouteId = reservation
-                    .getTrip()
-                    .getDepartureSchedule()
-                    .getRoute()
-                    .getRouteId();
-
-            // Ignore cancelled reservations
-            if (!reservation.getStatus()
-                    .equals(Reservation.CANCELLED)
-                    && existingRouteId.equals(targetRouteId)) {
+            if (!Reservation.CANCELLED.equals(reservation.getStatus())
+                    && targetRouteId.equals(reservation.getTrip().getRoute().getRouteId())) {
                 bookingCount++;
             }
         }

@@ -1,20 +1,17 @@
 package ph.edu.dlsu.anilink.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import ph.edu.dlsu.anilink.model.Route;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ph.edu.dlsu.anilink.model.Administrator;
-import ph.edu.dlsu.anilink.model.Driver;
-import ph.edu.dlsu.anilink.model.Passenger;
-import ph.edu.dlsu.anilink.model.User;
+import ph.edu.dlsu.anilink.model.*;
 
 @Service
 public class SupabaseService {
+
     private final RestClient restClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -27,13 +24,6 @@ public class SupabaseService {
                 .defaultHeader("apikey", secretKey)
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + secretKey)
                 .build();
-    }
-
-    public String getRoutes() {
-        return restClient.get()
-                .uri("/routes?select=*")
-                .retrieve()
-                .body(String.class);
     }
 
     public User findUserByEmail(String email) {
@@ -50,7 +40,6 @@ public class SupabaseService {
             }
 
             JsonNode user = users.get(0);
-
             Long userId = user.get("id").asLong();
             String name = user.get("name").asText();
             String userEmail = user.get("email").asText();
@@ -95,8 +84,16 @@ public class SupabaseService {
         }
     }
 
-    private String getOptionalText(JsonNode node, String fieldName) {
+    public String getUsers() {
+        return restClient.get()
+                .uri("/users?select=*")
+                .retrieve()
+                .body(String.class);
+    }
 
+    private String getOptionalText(
+            JsonNode node,
+            String fieldName) {
         JsonNode field = node.get(fieldName);
 
         if (field == null || field.isNull()) {
@@ -106,33 +103,79 @@ public class SupabaseService {
         return field.asText();
     }
 
+    public String getRoutes() {
+        return restClient.get()
+                .uri("/routes?select=*")
+                .retrieve()
+                .body(String.class);
+    }
+
     public String createRoute(Route route) {
         return restClient.post()
-                .uri("/routes?select=*")
-                .body(route)
+                .uri("/routes")
+                .body(
+                        java.util.Map.of(
+                                "id", route.getRouteId(),
+                                "origin", route.getOrigin(),
+                                "destination", route.getDestination()
+                        )
+                )
                 .retrieve()
                 .body(String.class);
     }
 
     public void updateRoute(Route route) {
         restClient.patch()
-                .uri("/routes?route_id=eq." + route.getRouteId())
-                .body(route)
+                .uri("/routes?id=eq." + route.getRouteId())
+                .body(
+                        java.util.Map.of(
+                                "origin", route.getOrigin(),
+                                "destination", route.getDestination()
+                        )
+                )
                 .retrieve()
                 .toBodilessEntity();
     }
 
     public void deleteRoute(Long routeId) {
         restClient.delete()
-                .uri("/routes?route_id=eq." + routeId)
+                .uri("/routes?id=eq." + routeId)
                 .retrieve()
                 .toBodilessEntity();
     }
 
-    public String getUsers() {
-        return restClient.get()
-                .uri("/users?select=*")
+    public String createReservation(Reservation reservation) {
+        return restClient.post()
+                .uri("/reservations")
+                .body(
+                        java.util.Map.of(
+                                "id", reservation.getReservationId(),
+                                "passenger_id", reservation.getPassenger().getUserId(),
+                                "trip_id", reservation.getTrip().getTripId(),
+                                "status", reservation.getStatus(),
+                                "qr_payload", reservation.getQrPayload()
+                        )
+                )
                 .retrieve()
                 .body(String.class);
+    }
+
+    public String getReservations() {
+        return restClient.get()
+                .uri("/reservations?select=*")
+                .retrieve()
+                .body(String.class);
+    }
+
+    public void cancelReservation(Long reservationId) {
+        restClient.patch()
+                .uri("/reservations?id=eq." + reservationId)
+                .body(
+                        java.util.Map.of(
+                                "status", "CANCELLED"
+                        )
+                )
+                .retrieve()
+                .toBodilessEntity();
     }
 }

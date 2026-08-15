@@ -4,17 +4,17 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import org.springframework.stereotype.Service;
 import ph.edu.dlsu.anilink.model.Reservation;
 
 import java.awt.image.BufferedImage;
 
+@Service
 public class QRService {
-
     public BufferedImage generateQRCode(Reservation reservation) {
-        if (reservation == null) {
+        if (reservation == null || reservation.getQrPayload() == null) {
             return null;
         }
-
         return generateQRCodeImage(reservation.getQrPayload(), 200, 200);
     }
 
@@ -27,13 +27,11 @@ public class QRService {
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
             BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
                     image.setRGB(x, y, bitMatrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
                 }
             }
-
             return image;
         } catch (WriterException e) {
             return null;

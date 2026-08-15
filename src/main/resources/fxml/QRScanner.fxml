@@ -2,27 +2,71 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
 
-<VBox xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="ph.edu.dlsu.anilink.controller.QRScannerController"
-      alignment="CENTER"
-      spacing="20"
-      prefWidth="1000"
-      prefHeight="650">
-    <padding>
-        <Insets top="40" right="50" bottom="40" left="50"/>
-    </padding>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ph.edu.dlsu.anilink.controller.QRScannerController"
+            prefWidth="1000" prefHeight="650">
 
-    <Label text="QR Scanner" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+    <stylesheets>
+        <URL value="@../css/main.css" />
+    </stylesheets>
 
-    <VBox alignment="CENTER" prefHeight="250" prefWidth="250" maxWidth="250" style="-fx-border-color: gray; -fx-border-width: 2px;">
-        <Label text="Camera Feed Placeholder" textFill="gray"/>
-    </VBox>
+    <top>
+        <HBox styleClass="top-nav" alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 10 20;">
+            <ImageView fitHeight="24" preserveRatio="true">
+                <image>
+                    <Image url="@../images/nologotitle.png" />
+                </image>
+            </ImageView>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label text="Welcome, Driver" style="-fx-text-fill: white; -fx-font-size: 13px;"/>
+            <Label text="🚌" style="-fx-text-fill: white; -fx-font-size: 20px;"/>
+        </HBox>
+    </top>
 
-    <Label fx:id="scanResultLabel" text="Awaiting scan..." style="-fx-font-size: 16px;"/>
+    <left>
+        <VBox prefWidth="200" spacing="5" styleClass="sidebar-white">
+            <Button text="Dashboard" prefWidth="180" styleClass="sidebar-btn"/>
+            <Button text="Trip Details" prefWidth="180" styleClass="sidebar-btn"/>
+            <Button text="Scan QR Code" prefWidth="180" styleClass="sidebar-btn, sidebar-btn-active"/>
+            <Region VBox.vgrow="ALWAYS" />
+            <Button text="Logout" prefWidth="180" styleClass="sidebar-btn"/>
+        </VBox>
+    </left>
 
-    <Button fx:id="simulateScanButton" text="Simulate Scan" onAction="#handleSimulateScan" prefWidth="250"/>
-    <Button fx:id="backButton" text="Back" onAction="#handleBack" prefWidth="250"/>
-</VBox>
+    <center>
+        <VBox spacing="20" style="-fx-background-color: #FFFFFF;" alignment="CENTER">
+            <padding>
+                <Insets top="30" right="40" bottom="30" left="40"/>
+            </padding>
+
+            <VBox alignment="CENTER" spacing="15" styleClass="dashboard-card" maxWidth="500">
+                <padding>
+                    <Insets top="40" right="40" bottom="40" left="40"/>
+                </padding>
+
+                <Label text="Scan Passenger QR" styleClass="section-title"/>
+
+                <VBox alignment="CENTER" prefHeight="300" prefWidth="300" maxWidth="300" style="-fx-border-color: #0d5c36; -fx-border-width: 2px; -fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: #E8F5E9;">
+                    <Label text="[ Camera Feed ]" textFill="#0d5c36" style="-fx-font-weight: bold;"/>
+                </VBox>
+
+                <HBox alignment="CENTER" style="-fx-background-color: #F8F9FA; -fx-padding: 15; -fx-background-radius: 8; -fx-min-width: 300;">
+                    <Label fx:id="scanResultLabel" text="Awaiting scan..." style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #666666;"/>
+                </HBox>
+
+                <HBox alignment="CENTER" spacing="15" style="-fx-padding: 10 0 0 0;">
+                    <Button fx:id="simulateScanButton" text="Simulate Scan" onAction="#handleSimulateScan" prefWidth="150" styleClass="primary-button"/>
+                    <Button fx:id="backButton" text="Cancel" onAction="#handleBack" prefWidth="150" styleClass="secondary-button"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

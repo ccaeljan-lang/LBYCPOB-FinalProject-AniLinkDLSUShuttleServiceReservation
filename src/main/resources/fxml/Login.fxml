@@ -5,19 +5,71 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
 
-<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ph.edu.dlsu.anilink.controller.LoginController"
-      alignment="CENTER" spacing="15" prefWidth="900" prefHeight="600">
-    <padding>
-        <Insets top="40" right="40" bottom="40" left="40"/>
-    </padding>
+<HBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ph.edu.dlsu.anilink.controller.LoginController"
+      prefWidth="900" prefHeight="600">
 
-    <TextField fx:id="emailField" promptText="DLSU Email" prefWidth="350" maxWidth="350"/>
+    <stylesheets>
+        <URL value="@../css/main.css" />
+    </stylesheets>
 
-    <PasswordField fx:id="passwordField" promptText="Password" prefWidth="350" maxWidth="350"/>
+    <!-- Left Side: Bus Image -->
+    <VBox prefWidth="450" alignment="CENTER" style="-fx-background-color: #E0E0E0;">
+        <ImageView fitWidth="450" fitHeight="600" preserveRatio="false">
+            <image>
+                <!-- Change "bus.jpg" to match your actual file name -->
+                <Image url="@../images/bus.jpg" />
+            </image>
+        </ImageView>
+    </VBox>
 
-    <Button fx:id="loginButton" text="Login" onAction="#handleLogin" prefWidth="350" maxWidth="350"/>
+    <!-- Right Side: Login Form -->
+    <VBox alignment="CENTER" spacing="15" prefWidth="450">
+        <padding>
+            <Insets top="40" right="40" bottom="40" left="40"/>
+        </padding>
 
-    <Label fx:id="messageLabel" wrapText="true"/>
-</VBox>
+        <!-- Logo Placeholder (Optional, based on your reference image) -->
+        <ImageView fitWidth="280" preserveRatio="true">
+            <image>
+                <Image url="@../images/title.png" />
+            </image>
+            <VBox.margin>
+                <Insets bottom="20"/>
+            </VBox.margin>
+        </ImageView>
+
+        <VBox alignment="CENTER_LEFT" maxWidth="350">
+            <Label text="Login" styleClass="header-label">
+                <VBox.margin>
+                    <Insets bottom="15"/>
+                </VBox.margin>
+            </Label>
+        </VBox>
+
+        <VBox alignment="CENTER_LEFT" maxWidth="350" spacing="5">
+            <Label text="Email / ID Number"/>
+            <TextField fx:id="emailField" promptText="firstname_lastname@dlsu.edu.ph" prefWidth="350" maxWidth="350"/>
+        </VBox>
+
+        <VBox alignment="CENTER_LEFT" maxWidth="350" spacing="5">
+            <Label text="Password"/>
+            <PasswordField fx:id="passwordField" promptText="Password" prefWidth="350" maxWidth="350"/>
+        </VBox>
+
+        <Button fx:id="loginButton" text="Login" onAction="#handleLogin" prefWidth="350" maxWidth="350" styleClass="primary-button">
+            <VBox.margin>
+                <Insets top="15"/>
+            </VBox.margin>
+        </Button>
+
+        <Button text="Exit" prefWidth="350" maxWidth="350" styleClass="secondary-button"/>
+
+        <Label fx:id="messageLabel" wrapText="true" textFill="red"/>
+    </VBox>
+</HBox>

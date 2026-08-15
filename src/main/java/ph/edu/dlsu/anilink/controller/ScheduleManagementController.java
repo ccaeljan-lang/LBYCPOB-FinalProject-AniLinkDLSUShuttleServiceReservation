@@ -17,9 +17,15 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import ph.edu.dlsu.anilink.service.SupabaseService;
+import java.util.List;
+
 @Controller
 public class ScheduleManagementController {
     private final SupabaseService supabaseService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public ScheduleManagementController(SupabaseService supabaseService) {
         this.supabaseService = supabaseService;
@@ -46,6 +52,7 @@ public class ScheduleManagementController {
     @FXML
     public void initialize() {
         scheduleListView.setItems(schedules);
+        loadRoutes();
     }
 
     @FXML
@@ -199,5 +206,23 @@ public class ScheduleManagementController {
         alert.setContentText(message);
 
         alert.showAndWait();
+    }
+    private void loadRoutes() {
+        try {
+            String response = supabaseService.getRoutes();
+
+            List<Route> routeList = objectMapper.readValue(
+                    response,
+                    new TypeReference<List<Route>>() {}
+            );
+
+            routeComboBox.getItems().setAll(routeList);
+        } catch (Exception e) {
+            showAlert(
+                    Alert.AlertType.ERROR,
+                    "Database Error",
+                    "Unable to load routes from Supabase."
+            );
+        }
     }
 }

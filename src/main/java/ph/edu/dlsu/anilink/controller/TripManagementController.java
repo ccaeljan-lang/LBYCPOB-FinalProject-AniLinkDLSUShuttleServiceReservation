@@ -8,10 +8,12 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
+import org.springframework.stereotype.Controller;
 import ph.edu.dlsu.anilink.model.DepartureSchedule;
 import ph.edu.dlsu.anilink.model.Route;
 import ph.edu.dlsu.anilink.model.Trip;
 
+@Controller
 public class TripManagementController {
 
     @FXML

@@ -3,7 +3,9 @@ package ph.edu.dlsu.anilink.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import org.springframework.stereotype.Controller;
 
+@Controller
 public class QRScannerController {
 
     @FXML

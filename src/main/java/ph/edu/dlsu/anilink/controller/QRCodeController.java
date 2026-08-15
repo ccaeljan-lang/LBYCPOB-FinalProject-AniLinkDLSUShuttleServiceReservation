@@ -6,11 +6,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.springframework.stereotype.Controller;
 import ph.edu.dlsu.anilink.model.Reservation;
 import ph.edu.dlsu.anilink.service.QRService;
 
 import java.awt.image.BufferedImage;
 
+@Controller
 public class QRCodeController {
     @FXML
     private ImageView qrCode;

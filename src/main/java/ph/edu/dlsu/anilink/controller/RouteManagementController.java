@@ -8,11 +8,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import org.springframework.stereotype.Controller;
 import ph.edu.dlsu.anilink.model.Route;
 import ph.edu.dlsu.anilink.service.SupabaseService;
 
 import java.util.List;
 
+@Controller
 public class RouteManagementController {
     @FXML
     private TextField routeIdField;

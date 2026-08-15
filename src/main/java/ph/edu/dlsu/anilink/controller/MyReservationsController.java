@@ -3,7 +3,9 @@ package ph.edu.dlsu.anilink.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import org.springframework.stereotype.Controller;
 
+@Controller
 public class MyReservationsController {
 
     @FXML

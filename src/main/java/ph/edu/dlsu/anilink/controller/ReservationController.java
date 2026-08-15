@@ -5,9 +5,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import org.springframework.stereotype.Controller;
 
 import java.time.LocalDate;
 
+@Controller
 public class ReservationController {
     @FXML
     private ComboBox<String> routeSelection;

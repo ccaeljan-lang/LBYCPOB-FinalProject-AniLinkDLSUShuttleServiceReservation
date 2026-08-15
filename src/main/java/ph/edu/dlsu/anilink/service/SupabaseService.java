@@ -1,13 +1,7 @@
-private final RestClient restClient;
+package ph.edu.dlsu.anilink.service;
 
-public SupabaseService(
-        @Value("${app.supabase.url}") String supabaseUrl,
-        @Value("${app.supabase.secret-key}") String secretKey) {
-
-    this.restClient = RestClient.builder()
-            .baseUrl(supabaseUrl + "/rest/v1")
-            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .defaultHeader("apikey", secretKey)
-            .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + secretKey)
-            .build();
-}
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;

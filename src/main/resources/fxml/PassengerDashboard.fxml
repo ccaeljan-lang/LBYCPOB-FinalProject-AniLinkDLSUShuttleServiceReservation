@@ -47,4 +47,66 @@
         </VBox>
     </left>
 
+    <center>
+        <VBox spacing="15" style="-fx-background-color: #FFFFFF;">
+            <padding>
+                <Insets top="20" right="30" bottom="20" left="30"/>
+            </padding>
+
+            <VBox spacing="8">
+                <Label text="Upcoming Reservation" styleClass="section-title"/>
+
+                <HBox styleClass="dashboard-card" alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 15;">
+                    <VBox alignment="CENTER" style="-fx-background-color: #0d5c36; -fx-background-radius: 50; -fx-min-width: 50; -fx-min-height: 50; -fx-max-width: 50; -fx-max-height: 50;">
+                        <Label text="🚌" style="-fx-text-fill: white; -fx-font-size: 20px;"/>
+                    </VBox>
+
+                    <VBox alignment="CENTER_LEFT" spacing="2" minWidth="180">
+                        <Label fx:id="currentTrip" text="Laguna Campus → Manila Campus" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
+                    </VBox>
+
+                    <VBox alignment="CENTER" spacing="2" minWidth="80">
+                        <Label text="Departure" style="-fx-text-fill: #666666; -fx-font-size: 11px;"/>
+                        <Label text="8:00 AM" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
+                    </VBox>
+
+                    <VBox alignment="CENTER" spacing="2" minWidth="60">
+                        <Label text="Trip" style="-fx-text-fill: #666666; -fx-font-size: 11px;"/>
+                        <Label text="Trip B" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
+                    </VBox>
+
+                    <VBox alignment="CENTER" spacing="2" minWidth="60">
+                        <Label text="Seat" style="-fx-text-fill: #666666; -fx-font-size: 11px;"/>
+                        <Label text="7" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
+                    </VBox>
+
+                    <VBox alignment="CENTER" spacing="2" minWidth="90">
+                        <Label text="Status" style="-fx-text-fill: #666666; -fx-font-size: 11px;"/>
+                        <Label fx:id="currentStatus" text="Confirmed" styleClass="status-badge, status-ongoing" style="-fx-padding: 3 10; -fx-font-size: 11px;"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <VBox spacing="8" VBox.vgrow="ALWAYS">
+                <Label text="Available Departure Schedules" styleClass="section-title"/>
+
+                <VBox style="-fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8;" VBox.vgrow="ALWAYS">
+                    <HBox styleClass="table-header" alignment="CENTER_LEFT" style="-fx-padding: 8 15;">
+                        <Label text="Route" prefWidth="220"/>
+                        <Label text="Departure Time" prefWidth="130" alignment="CENTER"/>
+                        <Label text="Available Seats" prefWidth="130" alignment="CENTER"/>
+                        <Label text="Action" prefWidth="100" alignment="CENTER"/>
+                    </HBox>
+
+                    <ListView fx:id="tripsListView" style="-fx-background-color: transparent; -fx-border-width: 0;" VBox.vgrow="ALWAYS"/>
+                </VBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="WL - Waitlist  |  Seats are updated in real-time." style="-fx-text-fill: #999999; -fx-font-size: 11px;"/>
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Button fx:id="bookTripButton" text="Book Selected" visible="false" managed="false"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
 </BorderPane>

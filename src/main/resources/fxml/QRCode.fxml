@@ -2,25 +2,79 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import java.net.URL?>
 
-<VBox xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="ph.edu.dlsu.anilink.controller.QRCodeController"
-      alignment="CENTER"
-      spacing="15"
-      prefWidth="900"
-      prefHeight="650">
-    <padding>
-        <Insets top="40" right="50" bottom="40" left="50"/>
-    </padding>
-    <Label text="AniLink Reservation QR Code"/>
-    <ImageView fx:id="qrCode" fitWidth="250" fitHeight="250" preserveRatio="true"/>
-    <Label fx:id="reservationCode" text="Reservation Code: --"/>
-    <Label fx:id="passengerName" text="Passenger: --"/>
-    <Label fx:id="route" text="Route: --"/>
-    <Label fx:id="departureTime" text="Departure: --"/>
-    <Label fx:id="status" text="Status: --"/>
-    <Button fx:id="back" text="Back" onAction="#handleBack" prefWidth="200"/>
-</VBox>
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ph.edu.dlsu.anilink.controller.QRCodeController"
+            prefWidth="1000" prefHeight="650">
+
+    <stylesheets>
+        <URL value="@../css/main.css" />
+    </stylesheets>
+
+    <top>
+        <HBox styleClass="top-nav" alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 10 20;">
+            <ImageView fitHeight="24" preserveRatio="true">
+                <image>
+                    <Image url="@../images/nologotitle.png" />
+                </image>
+            </ImageView>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label text="Welcome, Juan Dela Cruz" style="-fx-text-fill: white; -fx-font-size: 13px;"/>
+            <Label text="👤" style="-fx-text-fill: white; -fx-font-size: 20px;"/>
+        </HBox>
+    </top>
+
+    <left>
+        <VBox prefWidth="200" spacing="5" styleClass="sidebar-white">
+            <Button text="Home" prefWidth="180" styleClass="sidebar-btn"/>
+            <Button text="Reservations" prefWidth="180" styleClass="sidebar-btn, sidebar-btn-active"/>
+            <Button text="Trip History" prefWidth="180" styleClass="sidebar-btn"/>
+            <Button text="Profile" prefWidth="180" styleClass="sidebar-btn"/>
+            <Region VBox.vgrow="ALWAYS" />
+            <Button text="Logout" prefWidth="180" styleClass="sidebar-btn"/>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="15" style="-fx-background-color: #FFFFFF;" alignment="CENTER">
+            <padding>
+                <Insets top="30" right="40" bottom="30" left="40"/>
+            </padding>
+
+            <Label text="Your Digital Boarding Pass" styleClass="section-title"/>
+
+            <VBox alignment="CENTER" spacing="15" styleClass="dashboard-card" maxWidth="400">
+                <padding>
+                    <Insets top="30" right="40" bottom="30" left="40"/>
+                </padding>
+
+                <Label text="AniLink Reservation QR" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+
+                <VBox alignment="CENTER" style="-fx-border-color: #E0E0E0; -fx-border-radius: 5; -fx-padding: 10; -fx-background-color: white;">
+                    <ImageView fx:id="qrCode" fitWidth="220" fitHeight="220" preserveRatio="true"/>
+                </VBox>
+
+                <VBox alignment="CENTER_LEFT" spacing="8" style="-fx-background-color: #F8F9FA; -fx-padding: 15; -fx-background-radius: 5; -fx-min-width: 300;">
+                    <Label fx:id="reservationCode" text="Reservation Code: --" style="-fx-font-family: monospace; -fx-font-size: 14px;"/>
+                    <Label fx:id="passengerName" text="Passenger: --"/>
+                    <Label fx:id="route" text="Route: --" style="-fx-font-weight: bold; -fx-text-fill: #0d5c36;"/>
+                    <Label fx:id="departureTime" text="Departure: --"/>
+                    <Label fx:id="status" text="Status: --" styleClass="status-badge, status-scheduled"/>
+                </VBox>
+
+                <Button fx:id="back" text="Back to Reservations" onAction="#handleBack" prefWidth="300" styleClass="secondary-button">
+                    <VBox.margin>
+                        <Insets top="10"/>
+                    </VBox.margin>
+                </Button>
+            </VBox>
+        </VBox>
+    </center>
+</BorderPane>

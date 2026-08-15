@@ -178,4 +178,33 @@ public class SupabaseService {
                 .retrieve()
                 .toBodilessEntity();
     }
+
+    public String getSchedules() {
+        return restClient.get()
+                .uri("/departure_schedules?select=*")
+                .retrieve()
+                .body(String.class);
+    }
+
+    public String createSchedule(DepartureSchedule schedule) {
+        return restClient.post()
+                .uri("/departure_schedules")
+                .body(
+                        java.util.Map.of(
+                                "id", schedule.getScheduleId(),
+                                "route_id", schedule.getRoute().getRouteId(),
+                                "departure_time", schedule.getDepartureTime().toString(),
+                                "capacity", schedule.getCapacity()
+                        )
+                )
+                .retrieve()
+                .body(String.class);
+    }
+
+    public void deleteSchedule(Long scheduleId) {
+        restClient.delete()
+                .uri("/departure_schedules?id=eq." + scheduleId)
+                .retrieve()
+                .toBodilessEntity();
+    }
 }

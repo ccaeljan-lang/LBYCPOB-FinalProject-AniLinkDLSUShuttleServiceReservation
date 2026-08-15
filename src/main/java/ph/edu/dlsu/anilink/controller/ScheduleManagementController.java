@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import org.springframework.stereotype.Controller;
 import ph.edu.dlsu.anilink.model.DepartureSchedule;
 import ph.edu.dlsu.anilink.model.Route;
+import ph.edu.dlsu.anilink.service.SupabaseService;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -18,6 +19,11 @@ import java.time.format.DateTimeParseException;
 
 @Controller
 public class ScheduleManagementController {
+    private final SupabaseService supabaseService;
+
+    public ScheduleManagementController(SupabaseService supabaseService) {
+        this.supabaseService = supabaseService;
+    }
 
     @FXML
     private TextField scheduleIdField;
@@ -107,15 +113,23 @@ public class ScheduleManagementController {
                             capacity
                     );
 
-            schedules.add(schedule);
+            try {
+                supabaseService.createSchedule(schedule);
+                schedules.add(schedule);
+                clearFields();
 
-            clearFields();
-
-            showAlert(
-                    Alert.AlertType.INFORMATION,
-                    "Schedule Added",
-                    "Departure schedule was successfully added."
-            );
+                showAlert(
+                        Alert.AlertType.INFORMATION,
+                        "Schedule Added",
+                        "Departure schedule was successfully added."
+                );
+            } catch (Exception e) {
+                showAlert(
+                        Alert.AlertType.ERROR,
+                        "Database Error",
+                        "Unable to save schedule to Supabase."
+                );
+            }
 
         } catch (NumberFormatException e) {
 
@@ -137,24 +151,30 @@ public class ScheduleManagementController {
 
     @FXML
     private void handleDeleteSchedule() {
-
-        DepartureSchedule selectedSchedule =
-                scheduleListView
-                        .getSelectionModel()
-                        .getSelectedItem();
+        DepartureSchedule selectedSchedule = scheduleListView.getSelectionModel().getSelectedItem();
 
         if (selectedSchedule == null) {
-
             showAlert(
                     Alert.AlertType.WARNING,
                     "No Selection",
                     "Please select a schedule to delete."
             );
-
             return;
         }
 
-        schedules.remove(selectedSchedule);
+        try {
+            supabaseService.deleteSchedule(
+                    selectedSchedule.getScheduleId()
+            );
+
+            schedules.remove(selectedSchedule);
+        } catch (Exception e) {
+            showAlert(
+                    Alert.AlertType.ERROR,
+                    "Database Error",
+                    "Unable to delete schedule from Supabase."
+            );
+        }
     }
 
     private void clearFields() {

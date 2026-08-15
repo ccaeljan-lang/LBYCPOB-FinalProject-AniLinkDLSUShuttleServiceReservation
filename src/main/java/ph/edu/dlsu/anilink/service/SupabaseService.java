@@ -35,4 +35,18 @@ public class SupabaseService {
                 .retrieve()
                 .body(String.class);
     }
+
+    public String getReservations() {
+        return restClient.get()
+                .uri("/reservations?select=*")
+                .retrieve()
+                .body(String.class);
+    }
+
+    public String getUsers() {
+        return restClient.get()
+                .uri("/users?select=*")
+                .retrieve()
+                .body(String.class);
+    }
 }

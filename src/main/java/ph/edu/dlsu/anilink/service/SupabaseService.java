@@ -49,4 +49,11 @@ public class SupabaseService {
                 .retrieve()
                 .body(String.class);
     }
+
+    public String getSchedules() {
+        return restClient.get()
+                .uri("/departure_schedules?select=*")
+                .retrieve()
+                .body(String.class);
+    }
 }

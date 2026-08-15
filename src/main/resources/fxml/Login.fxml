@@ -18,23 +18,19 @@
         <URL value="@../css/main.css" />
     </stylesheets>
 
-    <!-- Left Side: Bus Image -->
     <VBox prefWidth="450" alignment="CENTER" style="-fx-background-color: #E0E0E0;">
         <ImageView fitWidth="450" fitHeight="600" preserveRatio="false">
             <image>
-                <!-- Change "bus.jpg" to match your actual file name -->
                 <Image url="@../images/bus.jpg" />
             </image>
         </ImageView>
     </VBox>
 
-    <!-- Right Side: Login Form -->
     <VBox alignment="CENTER" spacing="15" prefWidth="450">
         <padding>
             <Insets top="40" right="40" bottom="40" left="40"/>
         </padding>
 
-        <!-- Logo Placeholder (Optional, based on your reference image) -->
         <ImageView fitWidth="280" preserveRatio="true">
             <image>
                 <Image url="@../images/title.png" />

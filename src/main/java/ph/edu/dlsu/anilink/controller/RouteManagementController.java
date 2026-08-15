@@ -16,8 +16,6 @@ import java.util.List;
 
 @Controller
 public class RouteManagementController {
-    @FXML
-    private TextField routeIdField;
 
     @FXML
     private TextField originField;
@@ -133,7 +131,6 @@ public class RouteManagementController {
     }
 
     private void clearFields() {
-        routeIdField.clear();
         originField.clear();
         destinationField.clear();
     }

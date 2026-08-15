@@ -63,11 +63,10 @@ public class RouteManagementController {
 
     @FXML
     private void handleAddRoute() {
-        String routeIdText = routeIdField.getText().trim();
         String origin = originField.getText().trim();
         String destination = destinationField.getText().trim();
 
-        if (routeIdText.isEmpty() || origin.isEmpty() || destination.isEmpty()) {
+        if (origin.isEmpty() || destination.isEmpty()) {
             showAlert(
                     Alert.AlertType.WARNING,
                     "Missing Information",
@@ -77,10 +76,7 @@ public class RouteManagementController {
         }
 
         try {
-            Long routeId = Long.parseLong(routeIdText);
-
             Route route = new Route(
-                    routeId,
                     origin,
                     destination
             );
@@ -93,12 +89,6 @@ public class RouteManagementController {
                     Alert.AlertType.INFORMATION,
                     "Route Added",
                     "Route was successfully added."
-            );
-        } catch (NumberFormatException e) {
-            showAlert(
-                    Alert.AlertType.ERROR,
-                    "Invalid Route ID",
-                    "Route ID must be a valid number."
             );
         } catch (Exception e) {
             showAlert(

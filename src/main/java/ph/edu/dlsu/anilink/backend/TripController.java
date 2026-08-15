@@ -9,9 +9,8 @@ import ph.edu.dlsu.anilink.model.Trip;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController
+@RestController("apiTripController")
 @RequestMapping("/api/trips")
-
 public class TripController {
     private final List<Trip> trips = new ArrayList<>();
 

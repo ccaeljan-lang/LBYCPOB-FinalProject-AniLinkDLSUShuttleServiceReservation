@@ -11,7 +11,7 @@ import ph.edu.dlsu.anilink.service.ReservationService;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController
+@RestController("apiReservationController")
 @RequestMapping("/api/reservations")
 public class ReservationController {
     private final ReservationService reservationService;

@@ -9,9 +9,8 @@ import ph.edu.dlsu.anilink.model.Route;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController
+@RestController("apiRouteController")
 @RequestMapping("/api/routes")
-
 public class RouteController {
     private final List<Route> routes = new ArrayList<>();
 

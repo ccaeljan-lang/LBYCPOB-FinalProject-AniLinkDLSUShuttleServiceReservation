@@ -31,7 +31,7 @@ public class SupabaseService {
 
     public String createRoute(Route route) {
         return restClient.post()
-                .uri("/routes")
+                .uri("/routes?select=*")
                 .body(route)
                 .retrieve()
                 .body(String.class);

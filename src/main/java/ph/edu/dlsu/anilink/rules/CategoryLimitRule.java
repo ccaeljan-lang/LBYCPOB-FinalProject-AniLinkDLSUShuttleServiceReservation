@@ -11,23 +11,18 @@ public class CategoryLimitRule implements BookingRule {
 
     @Override
     public boolean validate(User user, Trip trip) {
-
-        // Rule only applies to passengers
         if (!(user instanceof Passenger)) {
             return false;
         }
 
         Passenger passenger = (Passenger) user;
-
         int bookingCount = 0;
 
-        for (Reservation reservation : passenger.getReservations()) {
-
+        for (Reservation reservation : passenger.getReservationHistory()) {
             String status = reservation.getStatus();
 
-            // Count only active reservations
-            if (!status.equals(Reservation.CANCELLED)
-                    && !status.equals(Reservation.COMPLETED)) {
+            if (!Reservation.CANCELLED.equals(status)
+                    && !Reservation.COMPLETED.equals(status)) {
                 bookingCount++;
             }
         }

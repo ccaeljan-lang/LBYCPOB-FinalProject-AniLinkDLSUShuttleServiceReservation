@@ -40,11 +40,6 @@ public class LoginController {
             return;
         }
 
-        if (!isValidDLSUEmail(email)) {
-            messageLabel.setText("Please use a valid DLSU email.");
-            return;
-        }
-
         try {
             User user = supabaseService.findUserByEmail(email);
 
@@ -72,7 +67,8 @@ public class LoginController {
         }
     }
 
-    private boolean isValidDLSUEmail(String email) {
-        return email.toLowerCase().endsWith("@dlsu.edu.ph");
+    @FXML
+    private void handleGoToRegister(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/Register.fxml", 900, 600);
     }
 }

@@ -313,10 +313,79 @@ public class SupabaseService {
                 .body(String.class);
     }
 
+    // 1. Updated createTrip to accept driverId and status dynamically
+    public String createTrip(Long routeId, Long scheduleId, Long driverId, int capacity, String status) {
+        java.util.Map<String, Object> bodyMap = new java.util.HashMap<>();
+        bodyMap.put("route_id", routeId);
+        bodyMap.put("schedule_id", scheduleId);
+        bodyMap.put("capacity", capacity);
+        bodyMap.put("seats_taken", 0);
+        bodyMap.put("status", (status != null && !status.isBlank()) ? status : "SCHEDULED");
+
+        if (driverId != null) {
+            bodyMap.put("driver_id", driverId);
+        }
+
+        return restClient.post()
+                .uri("/trips")
+                .header("Prefer", "return=representation")
+                .body(bodyMap)
+                .retrieve()
+                .body(String.class);
+    }
+
+    // 2. Assign or re-assign a driver to an existing trip
+    public String assignDriverToTrip(Long tripId, Long driverId) {
+        return restClient.patch()
+                .uri("/trips?trip_id=eq." + tripId)
+                .header("Prefer", "return=representation")
+                .body(java.util.Map.of("driver_id", driverId))
+                .retrieve()
+                .body(String.class);
+    }
+
+    // 3. Fetch users with role 'DRIVER' to populate the driver dropdowns
+    public String getDrivers() {
+        return restClient.get()
+                .uri("/users?role=eq.DRIVER")
+                .retrieve()
+                .body(String.class);
+    }
+
+    public void updateTripSeatsTaken(Long tripId, int newSeatsCount) {
+        restClient.patch()
+                .uri("/trips?id=eq." + tripId)
+                .body(java.util.Map.of("seats_taken", newSeatsCount))
+                .retrieve()
+                .toBodilessEntity();
+    }
+
+    public String getSchedules() {
+        return restClient.get()
+                .uri("/departure_schedules?select=*,route:routes(*)")
+                .retrieve()
+                .body(String.class);
+    }
+
+    public String createSchedule(Long routeId, String departureTime, int capacity) {
+        return restClient.post()
+                .uri("/departure_schedules")
+                .header("Prefer", "return=representation")
+                .body(java.util.Map.of(
+                        "route_id", routeId,
+                        "departure_time", departureTime,
+                        "capacity", capacity
+                ))
+                .retrieve()
+                .body(String.class);
+    }
+
     public void deleteSchedule(Long scheduleId) {
         restClient.delete()
                 .uri("/departure_schedules?id=eq." + scheduleId)
                 .retrieve()
                 .toBodilessEntity();
     }
+
+
 }

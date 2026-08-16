@@ -138,7 +138,7 @@ public class TripDetailsController {
 
         task.setOnFailed(e -> {
             if (task.getException() != null) {
-                task.getException().printStackTrace();
+                task.getException().printStackTrace(); // Prints stacktrace to console for easy debugging
             }
             showAlert(Alert.AlertType.ERROR, "Database Error", "Unable to load trip details.");
         });
@@ -187,13 +187,31 @@ public class TripDetailsController {
         });
     }
 
+    // --- Navigation Handlers ---
+
     @FXML
     private void handleViewPassengers(ActionEvent event) {
-        System.out.println("Opening passenger list...");
+        viewNavigator.navigateTo(event, "/fxml/PassengerList.fxml", 1000, 650);
     }
 
     @FXML
     private void handleDashboard(ActionEvent event) {
-        System.out.println("Returning to driver dashboard...");
+        viewNavigator.navigateTo(event, "/fxml/DriverDashboard.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleTripDetails(ActionEvent event) {
+        // Already on this page
+    }
+
+    @FXML
+    private void handleScanQR(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/QRScanner.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        userSession.clearSession();
+        viewNavigator.navigateTo(event, "/fxml/Login.fxml", 900, 600);
     }
 }

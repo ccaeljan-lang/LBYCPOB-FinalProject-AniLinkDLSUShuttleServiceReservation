@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import org.springframework.stereotype.Controller;
+import ph.edu.dlsu.anilink.model.User;
 import ph.edu.dlsu.anilink.util.UserSession;
 import ph.edu.dlsu.anilink.util.ViewNavigator;
 
@@ -29,6 +30,9 @@ public class PassengerDashboardController {
 
     @FXML
     private void initialize() {
-        // Will be updated to use session
+        User user = userSession.getCurrentUser();
+        if (user != null && passengerNameLabel != null) {
+            passengerNameLabel.setText("Welcome, " + user.getName());
+        }
     }
 }

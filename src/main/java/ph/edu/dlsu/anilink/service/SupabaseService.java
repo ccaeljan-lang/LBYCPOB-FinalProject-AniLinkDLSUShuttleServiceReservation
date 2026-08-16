@@ -499,4 +499,71 @@ public class SupabaseService {
                 .retrieve()
                 .body(String.class);
     }
+
+    public String getUserByEmail(String email) {
+        return restClient.get()
+                .uri("/users?email=eq." + email)
+                .retrieve()
+                .body(String.class);
+    }
+
+    public String createUser(java.util.Map<String, Object> userData) {
+        return restClient.post()
+                .uri("/users")
+                .header("Prefer", "return=representation")
+                .body(userData)
+                .retrieve()
+                .body(String.class);
+    }
+
+    public void deleteUser(Long id) {
+        restClient.delete()
+                .uri("/users?id=eq." + id)
+                .retrieve()
+                .toBodilessEntity();
+    }
+
+    public String getTripsByRouteAndDate(Long routeId, String dateStr) {
+        String startOfDay = dateStr + "T00:00:00";
+        String endOfDay = dateStr + "T23:59:59";
+
+        return restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/trips")
+                        .queryParam("route_id", "eq." + routeId)
+                        .queryParam("schedule.departure_time", "gte." + startOfDay)
+                        .queryParam("schedule.departure_time", "lt." + endOfDay)
+                        .queryParam("select", "*,schedule:departure_schedules(*)")
+                        .build())
+                .retrieve()
+                .body(String.class);
+    }
+
+    public String postReservation(Long passengerId, Long tripId, String qrPayload) throws Exception {
+        Map<String, Object> body = new HashMap<>();
+        body.put("passenger_id", passengerId);
+        body.put("trip_id", tripId);
+        body.put("qr_payload", qrPayload);
+        body.put("status", "WAITLISTED"); // Adjust status string as needed
+
+        return restClient.post()
+                .uri("/reservations")
+                .header("Prefer", "return=representation") // Tells PostgREST to return the inserted record
+                .header("Content-Type", "application/json")
+                .body(objectMapper.writeValueAsString(body))
+                .retrieve()
+                .body(String.class); // Returns the JSON array string containing the created record
+    }
+
+    public String getTripsByRoute(Long routeId) {
+        return restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/trips")
+                        .queryParam("route_id", "eq." + routeId)
+                        .queryParam("select", "*,schedule:departure_schedules(*)")
+                        .build())
+                .retrieve()
+                .body(String.class);
+    }
+
 }

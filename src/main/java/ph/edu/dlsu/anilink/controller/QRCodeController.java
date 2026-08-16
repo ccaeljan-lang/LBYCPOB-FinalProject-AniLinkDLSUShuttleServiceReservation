@@ -122,8 +122,30 @@ public class QRCodeController {
         new Thread(task).start();
     }
 
+    // Sidebar Action Handlers
+    @FXML
+    private void handleHome(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/PassengerDashboard.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleReservations(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/Reservation.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleTripHistory(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/MyReservations.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        userSession.clearSession();
+        viewNavigator.navigateTo(event, "/fxml/Login.fxml", 900, 600);
+    }
+
     @FXML
     private void handleBack(ActionEvent event) {
-        System.out.println("Returning to reservations...");
+        viewNavigator.navigateTo(event, "/fxml/PassengerDashboard.fxml", 1000, 650);
     }
 }

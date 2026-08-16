@@ -1,40 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox xmlns="http://javafx.com/javafx/21"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="ph.edu.dlsu.anilink.controller.AdminDashboardController"
-      alignment="CENTER"
-      spacing="25"
-      prefWidth="1000"
-      prefHeight="650">
-    <padding>
-        <Insets top="40" right="50" bottom="40" left="50"/>
-    </padding>
-    <Label text="Admin Dashboard"/>
-    <GridPane alignment="CENTER" hgap="20" vgap="20">
-        <VBox alignment="CENTER" spacing="10" prefWidth="250" prefHeight="120">
-            <Label text="Total Users"/>
-            <Label fx:id="totalUsers" text="0"/>
+<BorderPane prefHeight="650.0"
+            prefWidth="1000.0"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ph.edu.dlsu.anilink.controller.AdminDashboardController">
+
+    <stylesheets>
+        <URL value="@../css/main.css" />
+    </stylesheets>
+
+    <top>
+        <HBox alignment="CENTER_LEFT"
+              prefHeight="60.0"
+              spacing="20.0"
+              style="-fx-background-color: #0d5c36; -fx-padding: 10 25;"
+              styleClass="top-nav">
+            <ImageView fitHeight="28.0" preserveRatio="true">
+                <image>
+                    <Image url="@../images/nologotitle.png" />
+                </image>
+            </ImageView>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label style="-fx-text-fill: #F8FAFC; -fx-font-size: 14px; -fx-font-weight: bold;" text="Welcome, Admin" />
+            <Label style="-fx-text-fill: #94A3B8; -fx-font-size: 18px;" text="⚙️" />
+        </HBox>
+    </top>
+
+    <left>
+        <VBox prefWidth="220.0"
+              spacing="8.0"
+              style="-fx-background-color: #FFFFFF; -fx-border-color: #E2E8F0; -fx-border-width: 0 1 0 0;"
+              styleClass="sidebar-white">
+            <padding>
+                <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
+            </padding>
+            <Button onAction="#handleDashboard" prefHeight="40.0" prefWidth="190.0" styleClass="sidebar-btn, sidebar-btn-active" text="Dashboard" />
+            <Button onAction="#handleRouteManagement" prefHeight="40.0" prefWidth="190.0" styleClass="sidebar-btn" text="Route Management" />
+            <Button onAction="#handleScheduleManagement" prefHeight="40.0" prefWidth="190.0" styleClass="sidebar-btn" text="Schedule Management" />
+            <Button onAction="#handleTripManagement" prefHeight="40.0" prefWidth="190.0" styleClass="sidebar-btn" text="Trip Management" />
+
+            <Region VBox.vgrow="ALWAYS" />
+
+            <Button onAction="#handleLogout"
+                    prefHeight="40.0"
+                    prefWidth="190.0"
+                    style="-fx-background-color: #FEF2F2; -fx-text-fill: #DC2626; -fx-border-color: #FECACA; -fx-border-radius: 6px; -fx-background-radius: 6px; -fx-font-weight: bold; -fx-cursor: hand;"
+                    styleClass="sidebar-btn"
+                    text="Logout" />
         </VBox>
-        <VBox alignment="CENTER" spacing="10" prefWidth="250" prefHeight="120" GridPane.columnIndex="1">
-            <Label text="Today's Trips"/>
-            <Label fx:id="todaysTrips" text="0"/>
-        </VBox>
-        <VBox alignment="CENTER" spacing="10" prefWidth="250" prefHeight="120" GridPane.rowIndex="1">
-            <Label text="Active Trips"/>
-            <Label fx:id="activeTrips" text="0"/>
-        </VBox>
-        <VBox alignment="CENTER" spacing="10" prefWidth="250" prefHeight="120" GridPane.columnIndex="1" GridPane.rowIndex="1">
-            <Label text="Reservations"/>
-            <Label fx:id="reservations" text="0"/>
-        </VBox>
-        <VBox alignment="CENTER" spacing="10" prefWidth="250" prefHeight="120" GridPane.columnIndex="2">
-            <Label text="Available Seats"/>
-            <Label fx:id="availableSeats" text="0"/>
-        </VBox>
-    </GridPane>
-</VBox>
+    </left>
+
+</BorderPane>

@@ -261,6 +261,58 @@ public class SupabaseService {
                 .body(String.class);
     }
 
+    public String getTripDetails(Long tripId) throws Exception {
+        return restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/trips")
+                        .queryParam("id", "eq." + tripId)
+                        .queryParam("select", "*,route:routes(*),schedule:departure_schedules(*)")
+                        .build())
+                .retrieve()
+                .body(String.class);
+    }
+
+
+
+
+    public String getReservationByQrPayload(String qrPayload) {
+        return restClient.get()
+                .uri("/reservations?qr_payload=eq." + qrPayload + "&select=*,passenger:users(*)")
+                .retrieve()
+                .body(String.class);
+    }
+
+
+
+
+    public void updateReservationStatus(Long reservationId, String status) {
+        restClient.patch()
+                .uri("/reservations?id=eq." + reservationId)
+                .body(java.util.Map.of("status", status))
+                .retrieve()
+                .toBodilessEntity();
+    }
+
+
+
+
+    public String getSchedulesByRoute(Long routeId) {
+        return restClient.get()
+                .uri("/departure_schedules?route_id=eq." + routeId + "&select=*,routes(*)")
+                .retrieve()
+                .body(String.class);
+    }
+
+
+
+
+    public String getTripBySchedule(Long scheduleId) {
+        return restClient.get()
+                .uri("/trips?schedule_id=eq." + scheduleId + "&status=neq.COMPLETED&select=*")
+                .retrieve()
+                .body(String.class);
+    }
+
     public void deleteSchedule(Long scheduleId) {
         restClient.delete()
                 .uri("/departure_schedules?id=eq." + scheduleId)

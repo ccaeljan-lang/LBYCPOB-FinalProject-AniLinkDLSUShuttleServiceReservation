@@ -66,6 +66,8 @@
 
         <Button text="Exit" prefWidth="350" maxWidth="350" styleClass="secondary-button"/>
 
+        <Button text="Don't have an account? Sign Up" onAction="#handleGoToRegister" prefWidth="350" maxWidth="350" styleClass="secondary-button"/>
+
         <Label fx:id="messageLabel" wrapText="true" textFill="red"/>
     </VBox>
 </HBox>

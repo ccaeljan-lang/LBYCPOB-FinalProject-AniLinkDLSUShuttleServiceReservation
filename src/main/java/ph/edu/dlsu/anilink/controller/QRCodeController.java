@@ -1,6 +1,7 @@
 package ph.edu.dlsu.anilink.controller;
 
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -8,41 +9,48 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.springframework.stereotype.Controller;
 import ph.edu.dlsu.anilink.model.Reservation;
+import ph.edu.dlsu.anilink.model.User;
 import ph.edu.dlsu.anilink.service.QRService;
+import ph.edu.dlsu.anilink.util.UserSession;
+import ph.edu.dlsu.anilink.util.ViewNavigator;
 
 import java.awt.image.BufferedImage;
 
 @Controller
 public class QRCodeController {
-    @FXML
-    private ImageView qrCode;
 
-    @FXML
-    private Label reservationCode;
+    private final QRService qrService;
+    private final UserSession userSession;
+    private final ViewNavigator viewNavigator;
 
-    @FXML
-    private Label passengerName;
+    @FXML private Label userNameLabel;
+    @FXML private ImageView qrCode;
+    @FXML private Label reservationCode;
+    @FXML private Label passengerName;
+    @FXML private Label route;
+    @FXML private Label departureTime;
+    @FXML private Label status;
+    @FXML private Button back;
 
-    @FXML
-    private Label route;
-
-    @FXML
-    private Label departureTime;
-
-    @FXML
-    private Label status;
-
-    @FXML
-    private Button back;
-
-    private QRService qrService;
     private Reservation reservation;
+
+    public QRCodeController(QRService qrService,
+                            UserSession userSession,
+                            ViewNavigator viewNavigator) {
+        this.qrService = qrService;
+        this.userSession = userSession;
+        this.viewNavigator = viewNavigator;
+    }
 
     @FXML
     private void initialize() {
-        qrService = new QRService();
+        User user = userSession.getCurrentUser();
+        if (user != null && userNameLabel != null) {
+            userNameLabel.setText("Welcome, " + user.getName());
+        }
     }
 
+    // Temporary old sync logic
     public void setReservation(Reservation reservation) {
         this.reservation = reservation;
 
@@ -77,7 +85,7 @@ public class QRCodeController {
     }
 
     @FXML
-    private void handleBack() {
+    private void handleBack(ActionEvent event) {
         System.out.println("Returning to reservations...");
     }
 }

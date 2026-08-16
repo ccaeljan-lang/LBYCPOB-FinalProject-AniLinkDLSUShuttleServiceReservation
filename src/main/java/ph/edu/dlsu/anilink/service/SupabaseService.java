@@ -444,4 +444,59 @@ public class SupabaseService {
                 .retrieve()
                 .body(String.class);
     }
+
+    public String getReservationById(Long id) {
+        return restClient.get()
+                .uri("/reservations?id=eq." + id + "&select=*,passenger:users(*),trip:trips(*)")
+                .retrieve()
+                .body(String.class);
+    }
+
+    public String getRouteById(Long id) {
+        return restClient.get()
+                .uri("/routes?id=eq." + id)
+                .retrieve()
+                .body(String.class);
+    }
+
+    public String createRoute(String origin, String destination) {
+        return restClient.post()
+                .uri("/routes")
+                .header("Prefer", "return=representation")
+                .body(java.util.Map.of(
+                        "origin", origin,
+                        "destination", destination
+                ))
+                .retrieve()
+                .body(String.class);
+    }
+
+    public void deleteRoute(Long routeId) {
+        restClient.delete()
+                .uri("/routes?id=eq." + routeId)
+                .retrieve()
+                .toBodilessEntity();
+    }
+
+    public void updateTripLocation(Long tripId, double lat, double lng) {
+        restClient.patch()
+                .uri("/trips?id=eq." + tripId)
+                .body(java.util.Map.of("current_lat", lat, "current_lng", lng))
+                .retrieve()
+                .toBodilessEntity();
+    }
+
+    public String getAllUsers() {
+        return restClient.get()
+                .uri("/users")
+                .retrieve()
+                .body(String.class);
+    }
+
+    public String getUserById(Long id) {
+        return restClient.get()
+                .uri("/users?id=eq." + id)
+                .retrieve()
+                .body(String.class);
+    }
 }

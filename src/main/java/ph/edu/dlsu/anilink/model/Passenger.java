@@ -1,53 +1,42 @@
 package ph.edu.dlsu.anilink.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Passenger extends User {
 
-    private String category;
-    private List<Reservation> reservationHistory;
+    private String idNumber; // e.g., DLSU ID Number (121XXXXX)
 
-    public Passenger(Long userId, String name, String email, String password, String category) {
+    public Passenger() {
+        super();
+    }
+
+    @JsonCreator
+    public Passenger(
+            @JsonProperty("id") Long userId,
+            @JsonProperty("name") String name,
+            @JsonProperty("email") String email,
+            @JsonProperty("password") String password,
+            @JsonProperty("id_number") String idNumber) {
         super(userId, name, email, password);
-        this.category = category;
-        this.reservationHistory = new ArrayList<>();
+        this.idNumber = idNumber;
     }
 
-    public String getCategory() {
-        return category;
+    public String getIdNumber() {
+        return idNumber;
     }
 
-    public void setCategory(String category) {
-        if (category == null || category.trim().isEmpty()) {
-            throw new IllegalArgumentException("Category cannot be empty.");
-        }
-
-        this.category = category.trim();
-    }
-
-    public void addReservation(Reservation reservation) {
-        if (reservation == null) {
-            throw new IllegalArgumentException("Reservation cannot be null.");
-        }
-
-        reservationHistory.add(reservation);
-    }
-
-    public void removeReservation(Reservation reservation) {
-        if (reservation == null) {
-            throw new IllegalArgumentException("Reservation cannot be null.");
-        }
-
-        reservationHistory.remove(reservation);
-    }
-
-    public List<Reservation> getReservationHistory() {
-        return new ArrayList<>(reservationHistory);
+    public void setIdNumber(String idNumber) {
+        this.idNumber = idNumber;
     }
 
     @Override
     public String getRole() {
         return "PASSENGER";
+    }
+
+    @Override
+    public String toString() {
+        return getName() + " (Passenger - " + getEmail() + ")";
     }
 }

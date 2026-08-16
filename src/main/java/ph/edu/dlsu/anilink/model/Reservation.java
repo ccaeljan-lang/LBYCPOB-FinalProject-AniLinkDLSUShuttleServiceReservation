@@ -1,20 +1,42 @@
 package ph.edu.dlsu.anilink.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
 
 public class Reservation {
+
     public static final String CONFIRMED = "CONFIRMED";
     public static final String WAITLISTED = "WAITLISTED";
     public static final String VERIFIED = "VERIFIED";
+    public static final String BOARDED = "BOARDED";
     public static final String CANCELLED = "CANCELLED";
     public static final String COMPLETED = "COMPLETED";
 
+    @JsonProperty("id")
     private Long reservationId;
+
+    @JsonProperty("passenger")
     private Passenger passenger;
+
+    @JsonProperty("trip")
     private Trip trip;
+
+    @JsonProperty("created_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private LocalDateTime createdAt;
+
+    @JsonProperty("status")
     private String status;
+
+    @JsonProperty("qr_payload")
     private String qrPayload;
+
+    // Default constructor required for Jackson reflection
+    public Reservation() {
+        this.status = WAITLISTED;
+    }
 
     public Reservation(Long reservationId, Passenger passenger, Trip trip) {
         this.reservationId = reservationId;
@@ -49,23 +71,53 @@ public class Reservation {
         return reservationId;
     }
 
+    public void setReservationId(Long reservationId) {
+        this.reservationId = reservationId;
+    }
+
     public Passenger getPassenger() {
         return passenger;
+    }
+
+    public void setPassenger(Passenger passenger) {
+        this.passenger = passenger;
     }
 
     public Trip getTrip() {
         return trip;
     }
 
+    public void setTrip(Trip trip) {
+        this.trip = trip;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getStatus() {
         return status;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public String getQrPayload() {
         return qrPayload;
+    }
+
+    public void setQrPayload(String qrPayload) {
+        this.qrPayload = qrPayload;
+    }
+
+    @Override
+    public String toString() {
+        String passengerName = (passenger != null) ? passenger.getName() : "Unknown Passenger";
+        return String.format("RES-%d | %s | Status: %s", reservationId, passengerName, status);
     }
 }

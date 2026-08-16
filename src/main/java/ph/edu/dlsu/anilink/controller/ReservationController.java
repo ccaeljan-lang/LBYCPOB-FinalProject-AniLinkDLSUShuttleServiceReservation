@@ -1,5 +1,9 @@
 package ph.edu.dlsu.anilink.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -7,6 +11,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import org.springframework.stereotype.Controller;
+import ph.edu.dlsu.anilink.model.Route;
 import ph.edu.dlsu.anilink.model.User;
 import ph.edu.dlsu.anilink.service.BookingValidationService;
 import ph.edu.dlsu.anilink.service.SupabaseService;
@@ -14,6 +19,8 @@ import ph.edu.dlsu.anilink.util.UserSession;
 import ph.edu.dlsu.anilink.util.ViewNavigator;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class ReservationController {
@@ -22,6 +29,7 @@ public class ReservationController {
     private final UserSession userSession;
     private final ViewNavigator viewNavigator;
     private final BookingValidationService bookingValidationService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @FXML private Label userNameLabel;
     @FXML private ComboBox<String> routeSelection;
@@ -31,6 +39,13 @@ public class ReservationController {
     @FXML private Label tripStatus;
     @FXML private Button reserveButton;
     @FXML private Label reservationMessage;
+
+    private final Map<String, Route> routeMap = new HashMap<>();
+    private final Map<String, TripDetails> tripMap = new HashMap<>();
+
+    private Long selectedTripId = null;
+    private int currentCapacity = 0;
+    private int currentSeatsTaken = 0;
 
     public ReservationController(SupabaseService supabaseService,
                                  UserSession userSession,
@@ -49,76 +64,143 @@ public class ReservationController {
             userNameLabel.setText("Welcome, " + user.getName());
         }
 
-        loadRoutes();
-        loadSchedules();
+        setupListeners();
+        loadRoutesAsync();
+    }
+
+    private void setupListeners() {
+        routeSelection.valueProperty().addListener((obs, oldVal, newVal) -> {
+            dateSelection.setValue(null);
+            scheduleSelection.getItems().clear();
+            resetTripDetails();
+        });
+
+        dateSelection.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && routeSelection.getValue() != null) {
+                Route selectedRoute = routeMap.get(routeSelection.getValue());
+                if (selectedRoute != null) {
+                    loadTripsAsync(selectedRoute.getRouteId(), newVal);
+                }
+            }
+        });
+
+        scheduleSelection.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && tripMap.containsKey(newVal)) {
+                TripDetails details = tripMap.get(newVal);
+                selectedTripId = details.tripId;
+                currentCapacity = details.capacity;
+                currentSeatsTaken = details.seatsTaken;
+
+                availableSeats.setText("Available Seats: " + Math.max(0, currentCapacity - currentSeatsTaken));
+                tripStatus.setText("Status: " + details.status);
+            } else {
+                resetTripDetails();
+            }
+        });
+    }
+
+    private void resetTripDetails() {
+        selectedTripId = null;
+        currentCapacity = 0;
+        currentSeatsTaken = 0;
         availableSeats.setText("Available Seats: --");
-        tripStatus.setText("Trip Status: --");
-        reservationMessage.setText("");
+        tripStatus.setText("Status: --");
+        showMessage("", "#334155");
     }
 
-    // Temporary static data loader
-    private void loadRoutes() {
-        routeSelection.getItems().addAll("Manila → Laguna", "Laguna → Manila");
+    private void loadRoutesAsync() {
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                String json = supabaseService.getRoutes();
+                JsonNode routesArray = objectMapper.readTree(json);
+
+                Platform.runLater(() -> {
+                    routeSelection.getItems().clear();
+                    routeMap.clear();
+
+                    if (routesArray.isArray()) {
+                        for (JsonNode node : routesArray) {
+                            Route route = objectMapper.convertValue(node, Route.class);
+                            String display = route.getOrigin() + " ↔ " + route.getDestination();
+
+                            routeMap.put(display, route);
+                            routeSelection.getItems().add(display);
+                        }
+                    }
+                });
+                return null;
+            }
+        };
+        new Thread(task).start();
     }
 
-    // Temporary static data loader
-    private void loadSchedules() {
-        scheduleSelection.getItems().addAll("7:00 AM", "9:00 AM", "11:00 AM", "1:00 PM", "3:00 PM", "5:00 PM");
-    }
+    private void loadTripsAsync(Long routeId, LocalDate date) {
+        scheduleSelection.getItems().clear();
+        tripMap.clear();
+        resetTripDetails();
+        showMessage("Loading schedules...", "#0284C7");
 
-    @FXML
-    private void handleRouteSelection() {
-        if (routeSelection.getValue() == null) {
-            availableSeats.setText("Available Seats: --");
-            tripStatus.setText("Trip Status: --");
-            return;
-        }
-        availableSeats.setText("Available Seats: 30");
-        tripStatus.setText("Trip Status: Available");
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                String json = supabaseService.getTripsByRoute(routeId);
+                JsonNode tripsArray = objectMapper.readTree(json);
+
+                Platform.runLater(() -> {
+                    if (tripsArray.isArray() && !tripsArray.isEmpty()) {
+                        for (JsonNode trip : tripsArray) {
+                            long id = trip.path("id").asLong();
+                            String time = trip.path("schedule").path("departure_time").asText("Unknown Time");
+                            int capacity = trip.path("capacity").asInt(0);
+                            int seatsTaken = trip.path("seats_taken").asInt(0);
+                            String status = trip.path("status").asText("SCHEDULED");
+
+                            String display = "Departure: " + time;
+                            tripMap.put(display, new TripDetails(id, capacity, seatsTaken, status));
+                            scheduleSelection.getItems().add(display);
+                        }
+                        showMessage("", "#334155");
+                    } else {
+                        showMessage("No schedules found for selected route and date.", "#DC2626");
+                    }
+                });
+                return null;
+            }
+        };
+
+        task.setOnFailed(e -> Platform.runLater(() -> showMessage("Failed to load schedules.", "#DC2626")));
+        new Thread(task).start();
     }
 
     @FXML
     private void handleReserve() {
-        String route = routeSelection.getValue();
-        LocalDate date = dateSelection.getValue();
-        String schedule = scheduleSelection.getValue();
-
-        if (route == null || date == null || schedule == null) {
-            showMessage("Please fill in all fields.");
-            return;
-        }
-
-        if (date.isBefore(LocalDate.now())) {
-            showMessage("Please select a valid date.");
-            return;
-        }
-
-        showMessage("Reservation request submitted.");
+        // Will be updated in the next commit
+        showMessage("Temporary stub", "#334155");
     }
 
-    private void showMessage(String message) {
+    private void showMessage(String message, String colorCode) {
         reservationMessage.setText(message);
+        reservationMessage.setStyle("-fx-text-fill: " + colorCode + "; -fx-font-weight: bold; -fx-font-size: 13px;");
     }
 
-    // Sidebar Action Handlers
-    @FXML
-    private void handleHome(ActionEvent event) {
-        viewNavigator.navigateTo(event, "/fxml/PassengerDashboard.fxml", 1000, 650);
-    }
+    // Sidebar Action Handlers (Omitted for brevity, unchanged from Commit 1)
+    @FXML private void handleHome(ActionEvent event) { viewNavigator.navigateTo(event, "/fxml/PassengerDashboard.fxml", 1000, 650); }
+    @FXML private void handleReservations(ActionEvent event) {}
+    @FXML private void handleTripHistory(ActionEvent event) { viewNavigator.navigateTo(event, "/fxml/MyReservations.fxml", 1000, 650); }
+    @FXML private void handleLogout(ActionEvent event) { userSession.clearSession(); viewNavigator.navigateTo(event, "/fxml/Login.fxml", 900, 600); }
 
-    @FXML
-    private void handleReservations(ActionEvent event) {
-        // Already here
-    }
+    private static class TripDetails {
+        final Long tripId;
+        final int capacity;
+        final int seatsTaken;
+        final String status;
 
-    @FXML
-    private void handleTripHistory(ActionEvent event) {
-        viewNavigator.navigateTo(event, "/fxml/MyReservations.fxml", 1000, 650);
-    }
-
-    @FXML
-    private void handleLogout(ActionEvent event) {
-        userSession.clearSession();
-        viewNavigator.navigateTo(event, "/fxml/Login.fxml", 900, 600);
+        TripDetails(Long tripId, int capacity, int seatsTaken, String status) {
+            this.tripId = tripId;
+            this.capacity = capacity;
+            this.seatsTaken = seatsTaken;
+            this.status = status;
+        }
     }
 }

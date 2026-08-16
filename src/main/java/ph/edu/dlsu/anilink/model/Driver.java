@@ -1,20 +1,25 @@
 package ph.edu.dlsu.anilink.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Driver extends User {
 
     private String licenseNumber;
-    private Trip assignedTrip;
 
+    public Driver() {
+        super();
+    }
+
+    @JsonCreator
     public Driver(
-            Long userId,
-            String name,
-            String email,
-            String password,
-            String licenseNumber) {
-
+            @JsonProperty("id") Long userId,
+            @JsonProperty("name") String name,
+            @JsonProperty("email") String email,
+            @JsonProperty("password") String password,
+            @JsonProperty("license_number") String licenseNumber) {
         super(userId, name, email, password);
-        setLicenseNumber(licenseNumber);
-        this.assignedTrip = null;
+        this.licenseNumber = licenseNumber;
     }
 
     public String getLicenseNumber() {
@@ -22,11 +27,7 @@ public class Driver extends User {
     }
 
     public void setLicenseNumber(String licenseNumber) {
-        if (licenseNumber == null || licenseNumber.trim().isEmpty()) {
-            throw new IllegalArgumentException("License number cannot be empty.");
-        }
-
-        this.licenseNumber = licenseNumber.trim();
+        this.licenseNumber = licenseNumber;
     }
 
     @Override
@@ -34,27 +35,8 @@ public class Driver extends User {
         return "DRIVER";
     }
 
-    public void assignTrip(Trip trip) {
-        if (trip == null) {
-            throw new IllegalArgumentException("Trip cannot be null.");
-        }
-
-        this.assignedTrip = trip;
-    }
-
-    public Trip getAssignedTrip() {
-        return assignedTrip;
-    }
-
-    public boolean verifyPassenger(Reservation reservation) {
-        if (reservation == null) {
-            return false;
-        }
-
-        if (assignedTrip == null) {
-            return false;
-        }
-
-        return reservation.getTrip() == assignedTrip;
+    @Override
+    public String toString() {
+        return getName() + " (Driver)";
     }
 }

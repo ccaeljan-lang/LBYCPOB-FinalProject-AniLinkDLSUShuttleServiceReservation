@@ -387,5 +387,61 @@ public class SupabaseService {
                 .toBodilessEntity();
     }
 
+    public String getTripsWithDetails() {
+        return restClient.get()
+                .uri("/trips?select=*,route:routes(*),schedule:departure_schedules(*)")
+                .retrieve()
+                .body(String.class);
+    }
 
+
+    public String createTrip(Long routeId, Long scheduleId, int capacity, String status) {
+        return restClient.post()
+                .uri("/trips")
+                .header("Prefer", "return=representation")
+                .body(java.util.Map.of(
+                        "route_id", routeId,
+                        "schedule_id", scheduleId,
+                        "capacity", capacity,
+                        "seats_taken", 0,
+                        "status", status != null ? status : "SCHEDULED"
+                ))
+                .retrieve()
+                .body(String.class);
+    }
+
+
+    public void deleteTrip(Long tripId) {
+        restClient.delete()
+                .uri("/trips?id=eq." + tripId)
+                .retrieve()
+                .toBodilessEntity();
+    }
+
+
+    public String getActiveReservationsByPassenger(Long passengerId) {
+        return restClient.get()
+                .uri("/reservations?passenger_id=eq." + passengerId + "&status=neq.CANCELLED&status=neq.COMPLETED")
+                .retrieve()
+                .body(String.class);
+    }
+
+
+    public String getActiveReservationsByPassengerAndRoute(Long passengerId, Long routeId) {
+        return restClient.get()
+                .uri("/reservations?passenger_id=eq." + passengerId +
+                        "&status=neq.CANCELLED&status=neq.COMPLETED" +
+                        "&trip.route_id=eq." + routeId +
+                        "&select=*,trip:trips!inner(*)")
+                .retrieve()
+                .body(String.class);
+    }
+
+
+    public String getAllReservations() {
+        return restClient.get()
+                .uri("/reservations?select=*,passenger:users(*),trip:trips(*)")
+                .retrieve()
+                .body(String.class);
+    }
 }

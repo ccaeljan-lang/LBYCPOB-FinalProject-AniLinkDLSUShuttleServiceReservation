@@ -1,25 +1,33 @@
 package ph.edu.dlsu.anilink.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import org.springframework.stereotype.Controller;
+import ph.edu.dlsu.anilink.service.SupabaseService;
+import ph.edu.dlsu.anilink.util.UserSession;
+import ph.edu.dlsu.anilink.util.ViewNavigator;
 
 @Controller
 public class AdminDashboardController {
-    @FXML
-    private Label totalUsers;
 
-    @FXML
-    private Label todaysTrips;
+    private final SupabaseService supabaseService;
+    private final UserSession userSession;
+    private final ViewNavigator viewNavigator;
+    private final ObjectMapper objectMapper;
 
-    @FXML
-    private Label activeTrips;
+    @FXML private Label totalUsers;
+    @FXML private Label todaysTrips;
+    @FXML private Label activeTrips;
+    @FXML private Label reservations;
+    @FXML private Label availableSeats;
 
-    @FXML
-    private Label reservations;
-
-    @FXML
-    private Label availableSeats;
+    public AdminDashboardController(SupabaseService supabaseService, UserSession userSession, ViewNavigator viewNavigator) {
+        this.supabaseService = supabaseService;
+        this.userSession = userSession;
+        this.viewNavigator = viewNavigator;
+        this.objectMapper = new ObjectMapper();
+    }
 
     @FXML
     private void initialize() {

@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import org.springframework.stereotype.Controller;
+import ph.edu.dlsu.anilink.model.User;
 import ph.edu.dlsu.anilink.service.SupabaseService;
 import ph.edu.dlsu.anilink.util.UserSession;
 import ph.edu.dlsu.anilink.util.ViewNavigator;
@@ -106,5 +108,33 @@ public class AdminDashboardController {
         });
 
         new Thread(task).start();
+    }
+
+    // --- Navigation Handlers ---
+
+    @FXML
+    private void handleDashboard(ActionEvent event) {
+        // Already here
+    }
+
+    @FXML
+    private void handleRouteManagement(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/RouteManagement.fxml", 1100, 700);
+    }
+
+    @FXML
+    private void handleScheduleManagement(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/ScheduleManagement.fxml", 1100, 700);
+    }
+
+    @FXML
+    private void handleTripManagement(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/TripManagement.fxml", 1100, 700);
+    }
+
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        userSession.clearSession();
+        viewNavigator.navigateTo(event, "/fxml/Login.fxml", 900, 600);
     }
 }

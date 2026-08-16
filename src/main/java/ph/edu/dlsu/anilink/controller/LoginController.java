@@ -6,6 +6,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.springframework.stereotype.Controller;
+import ph.edu.dlsu.anilink.model.Administrator;
+import ph.edu.dlsu.anilink.model.Driver;
 import ph.edu.dlsu.anilink.model.User;
 import ph.edu.dlsu.anilink.service.SupabaseService;
 import ph.edu.dlsu.anilink.util.UserSession;
@@ -34,7 +36,7 @@ public class LoginController {
         String password = passwordField.getText();
 
         if (email.isEmpty() || password.isEmpty()) {
-            messageLabel.setText("Please enter your email and password.");
+            messageLabel.setText("Please fill in all fields.");
             return;
         }
 
@@ -46,17 +48,27 @@ public class LoginController {
         try {
             User user = supabaseService.findUserByEmail(email);
 
-            if (user == null || !user.getPassword().equals(password)) {
+            if (user != null && user.getPassword().equals(password)) {
+                userSession.setCurrentUser(user);
+
+                // Use 'instanceof' to check exactly which type of User object was returned
+                String fxmlPath;
+                if (user instanceof Administrator) {
+                    fxmlPath = "/fxml/AdminDashboard.fxml";
+                } else if (user instanceof Driver) {
+                    fxmlPath = "/fxml/DriverDashboard.fxml";
+                } else {
+                    // Default to passenger if it is an instance of Passenger or fallback
+                    fxmlPath = "/fxml/PassengerDashboard.fxml";
+                }
+
+                viewNavigator.navigateTo(event, fxmlPath, 1000, 650);
+            } else {
                 messageLabel.setText("Invalid email or password.");
-                return;
             }
-
-            // Temporary direct routing using the new ViewNavigator
-            viewNavigator.navigateTo(event, "/fxml/PassengerDashboard.fxml", 1000, 650);
-
         } catch (Exception e) {
             e.printStackTrace();
-            messageLabel.setText("Unable to connect to the database.");
+            messageLabel.setText("Login error occurred.");
         }
     }
 

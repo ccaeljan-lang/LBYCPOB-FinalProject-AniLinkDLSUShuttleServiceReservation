@@ -17,6 +17,7 @@ import ph.edu.dlsu.anilink.util.UserSession;
 import ph.edu.dlsu.anilink.util.ViewNavigator;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class RouteManagementController {
@@ -88,7 +89,128 @@ public class RouteManagementController {
         new Thread(task).start();
     }
 
-    // Add Route, Delete Route, clearFields, showAlert, and Navigation methods remain unchanged from Commit 1
+    @FXML
+    private void handleAddRoute() {
+        String origin = originField.getText().trim();
+        String destination = destinationField.getText().trim();
 
-    // ... [Omitted for brevity] ...
+        if (origin.isEmpty() || destination.isEmpty()) {
+            showInlineStatus("Please complete all fields.", "#DC2626"); // Red
+            return;
+        }
+
+        showInlineStatus("Adding route...", "#0284C7"); // Blue
+
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                supabaseService.createRoute(origin, destination);
+                return null;
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            showInlineStatus("Route added successfully!", "#16A34A"); // Green
+            clearFields();
+            loadRoutesAsync();
+        });
+
+        task.setOnFailed(e -> {
+            e.getSource().getException().printStackTrace();
+            showInlineStatus("Failed to add route.", "#DC2626"); // Red
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Unable to add route to Supabase.");
+        });
+
+        new Thread(task).start();
+    }
+
+    @FXML
+    private void handleDeleteRoute() {
+        Route selectedRoute = routeListView.getSelectionModel().getSelectedItem();
+
+        if (selectedRoute == null) {
+            showAlert(Alert.AlertType.WARNING, "No Selection", "Please select a route from the list to delete.");
+            return;
+        }
+
+        // Confirm deletion
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirm Deletion");
+        confirm.setHeaderText("Delete Route");
+        confirm.setContentText("Are you sure you want to delete the route: \n" +
+                selectedRoute.getOrigin() + " ↔ " + selectedRoute.getDestination() + "?");
+
+        Optional<ButtonType> result = confirm.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+
+            Task<Void> task = new Task<>() {
+                @Override
+                protected Void call() throws Exception {
+                    supabaseService.deleteRoute(selectedRoute.getRouteId());
+                    return null;
+                }
+            };
+
+            task.setOnSucceeded(e -> {
+                showInlineStatus("Route deleted.", "#16A34A");
+                loadRoutesAsync();
+            });
+
+            task.setOnFailed(e -> {
+                e.getSource().getException().printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Database Error", "Unable to delete route. It may be assigned to an active schedule or trip.");
+            });
+
+            new Thread(task).start();
+        }
+    }
+
+    private void clearFields() {
+        originField.clear();
+        destinationField.clear();
+    }
+
+    private void showInlineStatus(String message, String colorCode) {
+        statusLabel.setText(message);
+        statusLabel.setStyle("-fx-text-fill: " + colorCode + "; -fx-font-weight: bold; -fx-font-size: 13px;");
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(type);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
+    }
+
+    // --- Sidebar Navigation Handlers ---
+
+    @FXML
+    private void handleDashboard(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/AdminDashboard.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleRouteManagement(ActionEvent event) {
+        // Already on Route Management
+    }
+
+    @FXML
+    private void handleScheduleManagement(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/ScheduleManagement.fxml", 1100, 700);
+    }
+
+    @FXML
+    private void handleTripManagement(ActionEvent event) {
+        // Assuming a consolidated trip/schedule management view exists
+        viewNavigator.navigateTo(event, "/fxml/TripManagement.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        userSession.clearSession();
+        viewNavigator.navigateTo(event, "/fxml/Login.fxml", 900, 600);
+    }
 }

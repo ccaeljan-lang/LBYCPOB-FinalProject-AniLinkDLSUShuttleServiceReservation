@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -119,9 +120,31 @@ public class QRScannerController {
         new Thread(task).start();
     }
 
+    // Sidebar Action Handlers
     @FXML
-    private void handleBack() {
-        System.out.println("Returning to driver dashboard...");
+    private void handleDashboard(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/DriverDashboard.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleTripDetails(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/TripDetails.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleScanQR(ActionEvent event) {
+        // Already here
+    }
+
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        userSession.clearSession();
+        viewNavigator.navigateTo(event, "/fxml/Login.fxml", 900, 600);
+    }
+
+    @FXML
+    private void handleBack(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/DriverDashboard.fxml", 1000, 650);
     }
 
     private void showAlert(Alert.AlertType type, String title, String message) {

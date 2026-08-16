@@ -11,21 +11,28 @@ import java.awt.image.BufferedImage;
 
 @Service
 public class QRService {
+
     public BufferedImage generateQRCode(Reservation reservation) {
-        if (reservation == null || reservation.getQrPayload() == null) {
+        if (reservation == null || reservation.getQrPayload() == null || reservation.getQrPayload().isBlank()) {
             return null;
         }
-        return generateQRCodeImage(reservation.getQrPayload(), 200, 200);
+        return generateQRCodeImage(reservation.getQrPayload(), 250, 250);
     }
 
     public boolean verifyQRCode(String qrPayload) {
-        return qrPayload != null && qrPayload.startsWith("ANILINK-RES-");
+        if (qrPayload == null || qrPayload.isBlank()) {
+            return false;
+        }
+
+        // Accepts formatted reservation strings, UUIDs, or raw database keys
+        return qrPayload.startsWith("ANILINK-RES-") || qrPayload.trim().length() >= 8;
     }
 
-    private BufferedImage generateQRCodeImage(String text, int width, int height) {
+    public BufferedImage generateQRCodeImage(String text, int width, int height) {
         try {
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
             BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
@@ -34,6 +41,7 @@ public class QRService {
             }
             return image;
         } catch (WriterException e) {
+            e.printStackTrace();
             return null;
         }
     }

@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import ph.edu.dlsu.anilink.model.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class SupabaseService {
 
@@ -29,9 +32,15 @@ public class SupabaseService {
     public User findUserByEmail(String email) {
         try {
             String response = restClient.get()
-                    .uri("/users?email=eq." + email + "&select=*")
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/users")
+                            .queryParam("email", "eq." + email.trim())
+                            .queryParam("select", "*")
+                            .build())
                     .retrieve()
                     .body(String.class);
+
+            System.out.println("Supabase query response: " + response);
 
             JsonNode users = objectMapper.readTree(response);
 
@@ -40,11 +49,22 @@ public class SupabaseService {
             }
 
             JsonNode user = users.get(0);
-            Long userId = user.get("id").asLong();
-            String name = user.get("name").asText();
-            String userEmail = user.get("email").asText();
-            String password = user.get("password").asText();
-            String role = user.get("role").asText();
+
+            // Safely parse ID whether Supabase returns a Number or a UUID String
+            Long userId = 1L;
+            if (user.has("id") && !user.get("id").isNull()) {
+                if (user.get("id").isNumber()) {
+                    userId = user.get("id").asLong();
+                } else {
+                    // If ID is a UUID string, hash it to a positive Long for Model compatibility
+                    userId = Math.abs((long) user.get("id").asText().hashCode());
+                }
+            }
+
+            String name = user.has("name") ? user.get("name").asText() : "";
+            String userEmail = user.has("email") ? user.get("email").asText() : "";
+            String password = user.has("password") ? user.get("password").asText() : "";
+            String role = user.has("role") ? user.get("role").asText() : "PASSENGER";
 
             switch (role.toUpperCase()) {
                 case "PASSENGER":
@@ -72,21 +92,24 @@ public class SupabaseService {
                             getOptionalText(user, "admin_level")
                     );
                 default:
-                    throw new IllegalArgumentException(
-                            "Unknown user role: " + role
-                    );
+                    throw new IllegalArgumentException("Unknown user role: " + role);
             }
         } catch (Exception e) {
-            throw new RuntimeException(
-                    "Unable to retrieve user from Supabase.",
-                    e
-            );
+            e.printStackTrace();
+            throw new RuntimeException("Error fetching user: " + e.getMessage(), e);
         }
     }
 
     public String getUsers() {
         return restClient.get()
                 .uri("/users?select=*")
+                .retrieve()
+                .body(String.class);
+    }
+
+    public String getUsersByRole(String role) {
+        return restClient.get()
+                .uri("/users?role=eq." + role + "&select=*")
                 .retrieve()
                 .body(String.class);
     }
@@ -103,20 +126,6 @@ public class SupabaseService {
         return field.asText();
     }
 
-    public String createRoute(Route route) {
-        return restClient.post()
-                .uri("/routes")
-                .body(
-                        java.util.Map.of(
-                                "id", route.getRouteId(),
-                                "origin", route.getOrigin(),
-                                "destination", route.getDestination()
-                        )
-                )
-                .retrieve()
-                .body(String.class);
-    }
-
     public void updateRoute(Route route) {
         restClient.patch()
                 .uri("/routes?id=eq." + route.getRouteId())
@@ -126,13 +135,6 @@ public class SupabaseService {
                                 "destination", route.getDestination()
                         )
                 )
-                .retrieve()
-                .toBodilessEntity();
-    }
-
-    public void deleteRoute(Long routeId) {
-        restClient.delete()
-                .uri("/routes?id=eq." + routeId)
                 .retrieve()
                 .toBodilessEntity();
     }
@@ -156,6 +158,13 @@ public class SupabaseService {
     public String getReservations() {
         return restClient.get()
                 .uri("/reservations?select=*")
+                .retrieve()
+                .body(String.class);
+    }
+
+    public String getReservationsByPassenger(Long passengerId) {
+        return restClient.get()
+                .uri("/reservations?passenger_id=eq." + passengerId + "&select=*,trip:trips(*,route:routes(*),schedule:departure_schedules(*))")
                 .retrieve()
                 .body(String.class);
     }
@@ -192,19 +201,5 @@ public class SupabaseService {
                 .uri("/departure_schedules?id=eq." + scheduleId)
                 .retrieve()
                 .toBodilessEntity();
-    }
-
-    public String getRoutes() {
-        return restClient.get()
-                .uri("/routes?select=*")
-                .retrieve()
-                .body(String.class);
-    }
-
-    public String getSchedules() {
-        return restClient.get()
-                .uri("/departure_schedules?select=*")
-                .retrieve()
-                .body(String.class);
     }
 }

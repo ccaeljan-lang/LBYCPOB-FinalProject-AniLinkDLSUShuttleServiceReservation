@@ -203,7 +203,6 @@ public class SupabaseService {
                 .body(String.class);
     }
 
-
     // REPLACES THE OLD registerPassenger METHOD
     public String registerAccount(String name, String email, String password, String role, String extraDetail) {
         java.util.Map<String, Object> payload = new java.util.HashMap<>();
@@ -211,7 +210,6 @@ public class SupabaseService {
         payload.put("email", email);
         payload.put("password", password);
         payload.put("role", role);
-
 
         // Map the extra detail to the correct column so findUserByEmail doesn't crash later
         if ("PASSENGER".equalsIgnoreCase(role)) {
@@ -222,7 +220,6 @@ public class SupabaseService {
             payload.put("admin_level", "STANDARD"); // Default admin level
         }
 
-
         return restClient.post()
                 .uri("/users")
                 .header("Prefer", "return=representation")
@@ -231,14 +228,12 @@ public class SupabaseService {
                 .body(String.class);
     }
 
-
     public String getTrips() {
         return restClient.get()
                 .uri("/trips?select=*")
                 .retrieve()
                 .body(String.class);
     }
-
 
     public void updateTripStatus(Long tripId, String status) {
         restClient.patch()
@@ -247,7 +242,6 @@ public class SupabaseService {
                 .retrieve()
                 .toBodilessEntity();
     }
-
 
     public String getTripsByDriver(Long driverId) throws Exception {
         return restClient.get()
@@ -272,18 +266,12 @@ public class SupabaseService {
                 .body(String.class);
     }
 
-
-
-
     public String getReservationByQrPayload(String qrPayload) {
         return restClient.get()
                 .uri("/reservations?qr_payload=eq." + qrPayload + "&select=*,passenger:users(*)")
                 .retrieve()
                 .body(String.class);
     }
-
-
-
 
     public void updateReservationStatus(Long reservationId, String status) {
         restClient.patch()

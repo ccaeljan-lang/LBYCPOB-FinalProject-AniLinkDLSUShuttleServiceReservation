@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -69,6 +70,11 @@ public class TripManagementController {
         updateStatusComboBox.setItems(statuses);
 
         setupDriverComboBoxConverters();
+
+        loadRoutesAsync();
+        loadSchedulesAsync();
+        loadDriversAsync();
+        loadTripsAsync();
     }
 
     private void setupDriverComboBoxConverters() {
@@ -88,8 +94,90 @@ public class TripManagementController {
         updateDriverComboBox.setConverter(driverConverter);
     }
 
+    @FXML
+    private void handleRouteSelection() {
+        Route selectedRoute = routeComboBox.getValue();
+        if (selectedRoute == null) {
+            loadSchedulesAsync();
+            return;
+        }
+
+        Task<List<DepartureSchedule>> task = new Task<>() {
+            @Override
+            protected List<DepartureSchedule> call() throws Exception {
+                String response = supabaseService.getSchedulesByRoute(selectedRoute.getRouteId());
+                return objectMapper.readValue(response, new TypeReference<>() {});
+            }
+        };
+
+        task.setOnSucceeded(e -> scheduleComboBox.getItems().setAll(task.getValue()));
+        task.setOnFailed(e -> e.getSource().getException().printStackTrace());
+
+        new Thread(task).start();
+    }
+
+    // --- Async Data Loaders ---
+
+    private void loadRoutesAsync() {
+        Task<List<Route>> task = new Task<>() {
+            @Override
+            protected List<Route> call() throws Exception {
+                String response = supabaseService.getRoutes();
+                return objectMapper.readValue(response, new TypeReference<>() {});
+            }
+        };
+        task.setOnSucceeded(e -> routeComboBox.getItems().setAll(task.getValue()));
+        task.setOnFailed(e -> e.getSource().getException().printStackTrace());
+        new Thread(task).start();
+    }
+
+    private void loadSchedulesAsync() {
+        Task<List<DepartureSchedule>> task = new Task<>() {
+            @Override
+            protected List<DepartureSchedule> call() throws Exception {
+                String response = supabaseService.getSchedules();
+                return objectMapper.readValue(response, new TypeReference<>() {});
+            }
+        };
+        task.setOnSucceeded(e -> scheduleComboBox.getItems().setAll(task.getValue()));
+        task.setOnFailed(e -> e.getSource().getException().printStackTrace());
+        new Thread(task).start();
+    }
+
+    private void loadDriversAsync() {
+        Task<List<User>> task = new Task<>() {
+            @Override
+            protected List<User> call() throws Exception {
+                String response = supabaseService.getDrivers();
+                return objectMapper.readValue(response, new TypeReference<>() {});
+            }
+        };
+        task.setOnSucceeded(e -> {
+            List<User> driversList = task.getValue();
+            driverComboBox.getItems().setAll(driversList);
+            updateDriverComboBox.getItems().setAll(driversList);
+        });
+        task.setOnFailed(e -> e.getSource().getException().printStackTrace());
+        new Thread(task).start();
+    }
+
+    private void loadTripsAsync() {
+        Task<List<Trip>> task = new Task<>() {
+            @Override
+            protected List<Trip> call() throws Exception {
+                String response = supabaseService.getTripsWithDetails();
+                return objectMapper.readValue(response, new TypeReference<>() {});
+            }
+        };
+        task.setOnSucceeded(e -> trips.setAll(task.getValue()));
+        task.setOnFailed(e -> {
+            e.getSource().getException().printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Unable to load trips from Supabase.");
+        });
+        new Thread(task).start();
+    }
+
     // Temporary Stubs
-    @FXML private void handleRouteSelection() {}
     @FXML private void handleAddTrip() {}
     @FXML private void handleAssignDriver() {}
     @FXML private void handleUpdateStatus() {}
@@ -105,36 +193,11 @@ public class TripManagementController {
         });
     }
 
-    // --- Navigation Handlers ---
-
-    @FXML
-    private void handleDashboard(ActionEvent event) {
-        viewNavigator.navigateTo(event, "/fxml/AdminDashboard.fxml", 1100, 700);
-    }
-
-    @FXML
-    private void handleRouteManagement(ActionEvent event) {
-        viewNavigator.navigateTo(event, "/fxml/RouteManagement.fxml", 1100, 700);
-    }
-
-    @FXML
-    private void handleScheduleManagement(ActionEvent event) {
-        viewNavigator.navigateTo(event, "/fxml/ScheduleManagement.fxml", 1100, 700);
-    }
-
-    @FXML
-    private void handleTripManagement(ActionEvent event) {
-        // Already on this page
-    }
-
-    @FXML
-    private void handleRoutes(ActionEvent event) {
-        viewNavigator.navigateTo(event, "/fxml/RouteManagement.fxml", 1100, 700);
-    }
-
-    @FXML
-    private void handleLogout(ActionEvent event) {
-        userSession.clearSession();
-        viewNavigator.navigateTo(event, "/fxml/Login.fxml", 900, 600);
-    }
+    // --- Navigation Handlers [Omitted for brevity - Unchanged from Commit 1] ---
+    @FXML private void handleDashboard(ActionEvent event) { viewNavigator.navigateTo(event, "/fxml/AdminDashboard.fxml", 1100, 700); }
+    @FXML private void handleRouteManagement(ActionEvent event) { viewNavigator.navigateTo(event, "/fxml/RouteManagement.fxml", 1100, 700); }
+    @FXML private void handleScheduleManagement(ActionEvent event) { viewNavigator.navigateTo(event, "/fxml/ScheduleManagement.fxml", 1100, 700); }
+    @FXML private void handleTripManagement(ActionEvent event) { }
+    @FXML private void handleRoutes(ActionEvent event) { viewNavigator.navigateTo(event, "/fxml/RouteManagement.fxml", 1100, 700); }
+    @FXML private void handleLogout(ActionEvent event) { userSession.clearSession(); viewNavigator.navigateTo(event, "/fxml/Login.fxml", 900, 600); }
 }

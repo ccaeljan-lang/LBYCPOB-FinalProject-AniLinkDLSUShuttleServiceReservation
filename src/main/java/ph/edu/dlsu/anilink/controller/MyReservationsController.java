@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -119,6 +120,28 @@ public class MyReservationsController {
         });
 
         new Thread(task).start();
+    }
+
+    // Navigation Action Handlers
+    @FXML
+    private void handleHome(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/PassengerDashboard.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleReservations(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/Reservation.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleTripHistory(ActionEvent event) {
+        // Already on Trip History view
+    }
+
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        userSession.clearSession();
+        viewNavigator.navigateTo(event, "/fxml/Login.fxml", 900, 600);
     }
 
     // Inner Model for Table Binding

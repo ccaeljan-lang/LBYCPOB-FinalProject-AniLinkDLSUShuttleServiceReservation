@@ -17,23 +17,33 @@ public class Main extends Application {
     @Override
     public void init() {
         String[] args = getParameters().getRaw().toArray(new String[0]);
-        applicationContext = new SpringApplicationBuilder(AniLinkApplication.class).run(args);
+
+        // Disable Spring's default headless mode to support JavaFX desktop execution
+        this.applicationContext = new SpringApplicationBuilder(AniLinkApplication.class)
+                .headless(false)
+                .run(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Login.fxml"));
+
+        // Allow Spring to inject dependencies into JavaFX Controllers
         fxmlLoader.setControllerFactory(applicationContext::getBean);
 
         Parent root = fxmlLoader.load();
+
         primaryStage.setScene(new Scene(root, 900, 600));
         primaryStage.setTitle("AniLink Shuttle Service");
+        primaryStage.setResizable(true);
         primaryStage.show();
     }
 
     @Override
     public void stop() {
-        applicationContext.close();
+        if (applicationContext != null && applicationContext.isRunning()) {
+            applicationContext.close();
+        }
         Platform.exit();
     }
 

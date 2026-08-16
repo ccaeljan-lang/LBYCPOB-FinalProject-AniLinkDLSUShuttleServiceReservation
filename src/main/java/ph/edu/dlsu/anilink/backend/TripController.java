@@ -1,105 +1,142 @@
 package ph.edu.dlsu.anilink.backend;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import ph.edu.dlsu.anilink.model.Trip;
+import ph.edu.dlsu.anilink.service.SupabaseService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController("apiTripController")
 @RequestMapping("/api/trips")
 public class TripController {
-    private final List<Trip> trips = new ArrayList<>();
+
+    private final SupabaseService supabaseService;
+    private final ObjectMapper objectMapper;
+
+    public TripController(SupabaseService supabaseService) {
+        this.supabaseService = supabaseService;
+        this.objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    }
 
     // GET all trips
     @GetMapping
-    public List<Trip> getAllTrips() {
-        return trips;
+    public ResponseEntity<List<Trip>> getAllTrips() {
+        try {
+            String json = supabaseService.getTripsWithDetails();
+            List<Trip> tripsList = objectMapper.readValue(json, new TypeReference<List<Trip>>() {});
+            return ResponseEntity.ok(tripsList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     // GET trip by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Trip> getTripById(
-            @PathVariable Long id) {
+    public ResponseEntity<Trip> getTripById(@PathVariable Long id) {
+        try {
+            String json = supabaseService.getTripDetails(id);
+            List<Trip> tripsList = objectMapper.readValue(json, new TypeReference<List<Trip>>() {});
 
-        for (Trip trip : trips) {
-
-            if (trip.getTripId().equals(id)) {
-                return ResponseEntity.ok(trip);
+            if (tripsList.isEmpty()) {
+                return ResponseEntity.notFound().build();
             }
-        }
 
-        return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(tripsList.get(0));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     // CREATE a new trip
     @PostMapping
-    public ResponseEntity<Trip> createTrip(
-            @RequestBody Trip trip) {
+    public ResponseEntity<?> createTrip(@RequestBody Trip trip) {
+        if (trip.getRoute() == null || trip.getSchedule() == null) {
+            return ResponseEntity.badRequest().body("Trip must include both a route and a schedule.");
+        }
 
-        trips.add(trip);
+        try {
+            String json = supabaseService.createTrip(
+                    trip.getRoute().getRouteId(),
+                    trip.getSchedule().getScheduleId(),
+                    trip.getCapacity(),
+                    trip.getStatus()
+            );
+            List<Trip> createdList = objectMapper.readValue(json, new TypeReference<List<Trip>>() {});
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(trip);
+            if (createdList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create trip.");
+            }
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdList.get(0));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating trip in Supabase.");
+        }
     }
 
     // UPDATE trip status
     @PutMapping("/{id}/status")
-    public ResponseEntity<Trip> updateTripStatus(
+    public ResponseEntity<?> updateTripStatus(
             @PathVariable Long id,
             @RequestParam String status) {
 
-        for (Trip trip : trips) {
+        try {
+            supabaseService.updateTripStatus(id, status);
 
-            if (trip.getTripId().equals(id)) {
+            String json = supabaseService.getTripDetails(id);
+            List<Trip> tripsList = objectMapper.readValue(json, new TypeReference<List<Trip>>() {});
 
-                trip.updateStatus(status);
-
-                return ResponseEntity.ok(trip);
+            if (tripsList.isEmpty()) {
+                return ResponseEntity.notFound().build();
             }
+
+            return ResponseEntity.ok(tripsList.get(0));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update trip status.");
         }
-
-        return ResponseEntity.notFound().build();
     }
-
 
     // UPDATE trip location
     @PutMapping("/{id}/location")
-    public ResponseEntity<Trip> updateTripLocation(
+    public ResponseEntity<?> updateTripLocation(
             @PathVariable Long id,
             @RequestParam double lat,
             @RequestParam double lng) {
 
-        for (Trip trip : trips) {
+        try {
+            supabaseService.updateTripLocation(id, lat, lng);
 
-            if (trip.getTripId().equals(id)) {
+            String json = supabaseService.getTripDetails(id);
+            List<Trip> tripsList = objectMapper.readValue(json, new TypeReference<List<Trip>>() {});
 
-                trip.updateLocation(lat, lng);
-
-                return ResponseEntity.ok(trip);
+            if (tripsList.isEmpty()) {
+                return ResponseEntity.notFound().build();
             }
-        }
 
-        return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(tripsList.get(0));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update trip location.");
+        }
     }
 
     // DELETE trip
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTrip(
-            @PathVariable Long id) {
-
-        boolean removed = trips.removeIf(
-                trip -> trip.getTripId().equals(id)
-        );
-
-        if (removed) {
+    public ResponseEntity<Void> deleteTrip(@PathVariable Long id) {
+        try {
+            supabaseService.deleteTrip(id);
             return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
-        return ResponseEntity.notFound().build();
     }
 }

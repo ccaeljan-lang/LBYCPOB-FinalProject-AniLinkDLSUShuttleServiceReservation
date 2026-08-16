@@ -1,96 +1,102 @@
 package ph.edu.dlsu.anilink.backend;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ph.edu.dlsu.anilink.model.Passenger;
 import ph.edu.dlsu.anilink.model.Reservation;
 import ph.edu.dlsu.anilink.model.Trip;
+import ph.edu.dlsu.anilink.model.User;
 import ph.edu.dlsu.anilink.service.ReservationService;
+import ph.edu.dlsu.anilink.service.SupabaseService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController("apiReservationController")
 @RequestMapping("/api/reservations")
 public class ReservationController {
-    private final ReservationService reservationService;
 
-    private final List<Reservation> reservations = new ArrayList<>();
+    private final ReservationService reservationService;
+    private final SupabaseService supabaseService;
+    private final ObjectMapper objectMapper;
 
     public ReservationController(
-            ReservationService reservationService) {
-
+            ReservationService reservationService,
+            SupabaseService supabaseService) {
         this.reservationService = reservationService;
+        this.supabaseService = supabaseService;
+        this.objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     }
 
     @GetMapping
-    public List<Reservation> getAllReservations() {
-        return reservations;
+    public ResponseEntity<List<Reservation>> getAllReservations() {
+        try {
+            String json = supabaseService.getAllReservations();
+            List<Reservation> list = objectMapper.readValue(json, new TypeReference<List<Reservation>>() {});
+            return ResponseEntity.ok(list);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Reservation> getReservationById(
-            @PathVariable Long id) {
-
-        for (Reservation reservation : reservations) {
-
-            if (reservation.getReservationId().equals(id)) {
-                return ResponseEntity.ok(reservation);
+    public ResponseEntity<Reservation> getReservationById(@PathVariable Long id) {
+        try {
+            String json = supabaseService.getReservationById(id);
+            List<Reservation> list = objectMapper.readValue(json, new TypeReference<List<Reservation>>() {});
+            if (list.isEmpty()) {
+                return ResponseEntity.notFound().build();
             }
+            return ResponseEntity.ok(list.get(0));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
-        return ResponseEntity.notFound().build();
     }
 
-    // CREATE reservation
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(
-            @RequestParam Long reservationId,
-            @RequestBody ReservationRequest request) {
-
-        Reservation reservation =
-                reservationService.createReservation(
-                        reservationId,
-                        request.passenger(),
-                        request.trip()
-                );
-
-        if (reservation == null) {
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .build();
+    public ResponseEntity<?> createReservation(@RequestBody ReservationRequest request) {
+        try {
+            Reservation reservation = reservationService.createReservation(
+                    request.passenger(),
+                    request.trip()
+            );
+            return ResponseEntity.status(HttpStatus.CREATED).body(reservation);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create reservation.");
         }
-
-        reservations.add(reservation);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(reservation);
     }
 
-    // CANCEL reservation
     @PutMapping("/{id}/cancel")
-    public ResponseEntity<Reservation> cancelReservation(
-            @PathVariable Long id) {
-
-        for (Reservation reservation : reservations) {
-
-            if (reservation.getReservationId().equals(id)) {
-
-                reservation.cancel();
-
-                reservation.getTrip().removePassenger();
-
-                return ResponseEntity.ok(reservation);
+    public ResponseEntity<?> cancelReservation(@PathVariable Long id) {
+        try {
+            String json = supabaseService.getReservationById(id);
+            List<Reservation> list = objectMapper.readValue(json, new TypeReference<List<Reservation>>() {});
+            if (list.isEmpty()) {
+                return ResponseEntity.notFound().build();
             }
-        }
 
-        return ResponseEntity.notFound().build();
+            Reservation reservation = list.get(0);
+            supabaseService.updateReservationStatus(id, Reservation.CANCELLED);
+
+            if (reservation.getTrip() != null) {
+                Long tripId = reservation.getTrip().getTripId();
+                int updatedSeats = Math.max(0, reservation.getTrip().getSeatsTaken() - 1);
+                supabaseService.updateTripSeatsTaken(tripId, updatedSeats);
+            }
+
+            reservation.cancel();
+            return ResponseEntity.ok(reservation);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to cancel reservation.");
+        }
     }
 
     public record ReservationRequest(
-            Passenger passenger,
+            User passenger,
             Trip trip
     ) {
     }

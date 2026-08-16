@@ -4,28 +4,27 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import org.springframework.stereotype.Controller;
+import ph.edu.dlsu.anilink.model.User;
 import ph.edu.dlsu.anilink.service.SupabaseService;
 import ph.edu.dlsu.anilink.util.UserSession;
 import ph.edu.dlsu.anilink.util.ViewNavigator;
 
 @Controller
-public class AdminDashboardController {
+public class DriverDashboardController {
 
     private final SupabaseService supabaseService;
     private final UserSession userSession;
     private final ViewNavigator viewNavigator;
     private final ObjectMapper objectMapper;
 
-    @FXML private Label totalUsers;
-    @FXML private Label todaysTrips;
-    @FXML private Label availableSeats;
-    @FXML private Label activeTrips;
-    @FXML private Label reservations;
+    @FXML private Label driverNameLabel;
+    @FXML private Label currentTripLabel;
 
-    public AdminDashboardController(SupabaseService supabaseService, UserSession userSession, ViewNavigator viewNavigator) {
+    public DriverDashboardController(SupabaseService supabaseService, UserSession userSession, ViewNavigator viewNavigator) {
         this.supabaseService = supabaseService;
         this.userSession = userSession;
         this.viewNavigator = viewNavigator;
@@ -34,77 +33,85 @@ public class AdminDashboardController {
 
     @FXML
     public void initialize() {
-        loadDashboardStatisticsAsync();
+        User currentUser = userSession.getCurrentUser();
+        if (currentUser != null) {
+            if (driverNameLabel != null) {
+                driverNameLabel.setText("Welcome, " + currentUser.getName());
+            }
+            loadCurrentTripAsync(currentUser.getUserId());
+        }
     }
 
-    private void loadDashboardStatisticsAsync() {
-        Task<Void> task = new Task<>() {
+    private void loadCurrentTripAsync(Long driverId) {
+        Task<String> task = new Task<>() {
             @Override
-            protected Void call() throws Exception {
-                // 1. Get Total Users Count
-                String usersJson = supabaseService.getAllUsers();
-                int usersCount = objectMapper.readTree(usersJson).size();
-
-                // 2. Get Reservations Count
-                String reservationsJson = supabaseService.getReservations();
-                int resCount = objectMapper.readTree(reservationsJson).size();
-
-                // 3. Process Trips for multiple metrics
-                String tripsJson = supabaseService.getTrips();
+            protected String call() throws Exception {
+                // 1. Get the active trips for this driver
+                String tripsJson = supabaseService.getTripsByDriver(driverId);
                 JsonNode tripsArray = objectMapper.readTree(tripsJson);
 
-                int totalTripsCount = tripsArray.size(); // Simplified to total trips for now
-                int activeCount = 0;
-                int availableSeatsCount = 0;
-
-                for (JsonNode trip : tripsArray) {
-                    String status = trip.path("status").asText("");
-
-                    // Count Active Trips (Boarding or In Transit)
-                    if ("IN_TRANSIT".equals(status) || "BOARDING".equals(status)) {
-                        activeCount++;
-                    }
-
-                    // Calculate Available Seats (Capacity - Seats Taken)
-                    // Only count for trips that haven't completed or cancelled
-                    if (!"COMPLETED".equals(status) && !"CANCELLED".equals(status)) {
-                        int capacity = trip.path("capacity").asInt(0);
-                        int seatsTaken = trip.path("seats_taken").asInt(0);
-                        availableSeatsCount += Math.max(0, capacity - seatsTaken);
-                    }
+                if (!tripsArray.isArray() || tripsArray.isEmpty()) {
+                    return "No active trip assigned.";
                 }
 
-                // Final Variables for lambda
-                final String fUsers = String.valueOf(usersCount);
-                final String fTrips = String.valueOf(totalTripsCount);
-                final String fSeats = String.valueOf(availableSeatsCount);
-                final String fActive = String.valueOf(activeCount);
-                final String fRes = String.valueOf(resCount);
+                // 2. Grab the first active trip
+                JsonNode firstTrip = tripsArray.get(0);
+                Long tripId = firstTrip.path("id").asLong(); // Adjust to "trip_id" if that's your DB column name
 
-                // Update UI safely on JavaFX thread
-                Platform.runLater(() -> {
-                    totalUsers.setText(fUsers);
-                    todaysTrips.setText(fTrips);
-                    availableSeats.setText(fSeats);
-                    activeTrips.setText(fActive);
-                    reservations.setText(fRes);
-                });
+                // 3. Get full details (including route and schedule joins)
+                String tripDetailsJson = supabaseService.getTripDetails(tripId);
+                JsonNode tripDetailsArray = objectMapper.readTree(tripDetailsJson);
 
-                return null;
+                if (tripDetailsArray.isArray() && !tripDetailsArray.isEmpty()) {
+                    JsonNode details = tripDetailsArray.get(0);
+
+                    String origin = details.path("route").path("origin").asText("Unknown Origin");
+                    String destination = details.path("route").path("destination").asText("Unknown Destination");
+                    String status = details.path("status").asText("SCHEDULED");
+
+                    int capacity = details.path("capacity").asInt(0);
+                    int seatsTaken = details.path("seats_taken").asInt(0);
+
+                    return String.format("%s ➔ %s\nStatus: %s  |  Passengers: %d / %d",
+                            origin, destination, status, seatsTaken, capacity);
+                }
+
+                return "Trip details unavailable.";
             }
         };
 
+        task.setOnSucceeded(e -> {
+            Platform.runLater(() -> currentTripLabel.setText(task.getValue()));
+        });
+
         task.setOnFailed(e -> {
             e.getSource().getException().printStackTrace();
-            Platform.runLater(() -> {
-                totalUsers.setText("Error");
-                todaysTrips.setText("Error");
-                availableSeats.setText("Error");
-                activeTrips.setText("Error");
-                reservations.setText("Error");
-            });
+            Platform.runLater(() -> currentTripLabel.setText("Error loading trip data."));
         });
 
         new Thread(task).start();
+    }
+
+    // --- Navigation Handlers ---
+
+    @FXML
+    private void handleDashboard(ActionEvent event) {
+        // Already on this page
+    }
+
+    @FXML
+    private void handleViewTripDetails(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/TripDetails.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleScanQR(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/QRScanner.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        userSession.clearSession();
+        viewNavigator.navigateTo(event, "/fxml/Login.fxml", 900, 600);
     }
 }

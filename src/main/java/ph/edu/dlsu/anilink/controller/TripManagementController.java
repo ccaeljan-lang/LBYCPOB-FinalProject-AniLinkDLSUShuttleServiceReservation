@@ -1,225 +1,140 @@
 package ph.edu.dlsu.anilink.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-
+import javafx.scene.control.*;
+import javafx.util.StringConverter;
 import org.springframework.stereotype.Controller;
 import ph.edu.dlsu.anilink.model.DepartureSchedule;
 import ph.edu.dlsu.anilink.model.Route;
 import ph.edu.dlsu.anilink.model.Trip;
+import ph.edu.dlsu.anilink.model.User;
+import ph.edu.dlsu.anilink.service.SupabaseService;
+import ph.edu.dlsu.anilink.util.UserSession;
+import ph.edu.dlsu.anilink.util.ViewNavigator;
+
+import java.util.List;
 
 @Controller
 public class TripManagementController {
 
-    @FXML
-    private TextField tripIdField;
+    private final SupabaseService supabaseService;
+    private final UserSession userSession;
+    private final ViewNavigator viewNavigator;
+    private final ObjectMapper objectMapper;
 
-    @FXML
-    private ComboBox<Route> routeComboBox;
+    @FXML private Label adminNameLabel;
+    @FXML private ComboBox<Route> routeComboBox;
+    @FXML private ComboBox<DepartureSchedule> scheduleComboBox;
+    @FXML private ComboBox<User> driverComboBox;
+    @FXML private TextField capacityField;
+    @FXML private ComboBox<String> statusComboBox;
+    @FXML private ComboBox<User> updateDriverComboBox;
+    @FXML private ComboBox<String> updateStatusComboBox;
+    @FXML private ListView<Trip> tripListView;
 
-    @FXML
-    private ComboBox<DepartureSchedule> scheduleComboBox;
+    private final ObservableList<Trip> trips = FXCollections.observableArrayList();
+    private final ObservableList<String> statuses = FXCollections.observableArrayList(
+            "SCHEDULED", "ARRIVING", "BOARDING", "IN_TRANSIT", "COMPLETED", "CANCELLED"
+    );
 
-    @FXML
-    private TextField capacityField;
+    public TripManagementController(SupabaseService supabaseService, UserSession userSession, ViewNavigator viewNavigator) {
+        this.supabaseService = supabaseService;
+        this.userSession = userSession;
+        this.viewNavigator = viewNavigator;
 
-    @FXML
-    private ComboBox<String> statusComboBox;
-
-    @FXML
-    private ListView<Trip> tripListView;
-
-    private final ObservableList<Trip> trips =
-            FXCollections.observableArrayList();
+        this.objectMapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     @FXML
     public void initialize() {
+        User user = userSession.getCurrentUser();
+        if (user != null && adminNameLabel != null) {
+            adminNameLabel.setText("Welcome, " + user.getName());
+        }
 
         tripListView.setItems(trips);
 
-        statusComboBox.setItems(
-                FXCollections.observableArrayList(
-                        Trip.SCHEDULED,
-                        Trip.ARRIVING,
-                        Trip.BOARDING,
-                        Trip.DEPARTED,
-                        Trip.COMPLETED
-                )
-        );
+        statusComboBox.setItems(statuses);
+        statusComboBox.setValue("SCHEDULED");
+        updateStatusComboBox.setItems(statuses);
 
-        statusComboBox.setValue(Trip.SCHEDULED);
+        setupDriverComboBoxConverters();
     }
 
-    @FXML
-    private void handleAddTrip() {
-
-        String tripIdText =
-                tripIdField.getText().trim();
-
-        Route route =
-                routeComboBox.getValue();
-
-        DepartureSchedule schedule =
-                scheduleComboBox.getValue();
-
-        String capacityText =
-                capacityField.getText().trim();
-
-        if (tripIdText.isEmpty()
-                || route == null
-                || schedule == null
-                || capacityText.isEmpty()) {
-
-            showAlert(
-                    Alert.AlertType.WARNING,
-                    "Missing Information",
-                    "Please complete all fields."
-            );
-
-            return;
-        }
-
-        try {
-
-            Long tripId =
-                    Long.parseLong(tripIdText);
-
-            int capacity =
-                    Integer.parseInt(capacityText);
-
-            if (capacity <= 0) {
-
-                showAlert(
-                        Alert.AlertType.WARNING,
-                        "Invalid Capacity",
-                        "Capacity must be greater than zero."
-                );
-
-                return;
+    private void setupDriverComboBoxConverters() {
+        StringConverter<User> driverConverter = new StringConverter<>() {
+            @Override
+            public String toString(User user) {
+                return (user != null) ? user.getName() : "";
             }
 
-            Trip trip =
-                    new Trip(
-                            tripId,
-                            route,
-                            schedule,
-                            capacity
-                    );
-
-            String status =
-                    statusComboBox.getValue();
-
-            if (status != null) {
-                trip.updateStatus(status);
+            @Override
+            public User fromString(String string) {
+                return null;
             }
+        };
 
-            trips.add(trip);
+        driverComboBox.setConverter(driverConverter);
+        updateDriverComboBox.setConverter(driverConverter);
+    }
 
-            clearFields();
+    // Temporary Stubs
+    @FXML private void handleRouteSelection() {}
+    @FXML private void handleAddTrip() {}
+    @FXML private void handleAssignDriver() {}
+    @FXML private void handleUpdateStatus() {}
+    @FXML private void handleDeleteTrip() {}
 
-            showAlert(
-                    Alert.AlertType.INFORMATION,
-                    "Trip Added",
-                    "Trip was successfully created."
-            );
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(type);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
+    }
 
-        } catch (NumberFormatException e) {
+    // --- Navigation Handlers ---
 
-            showAlert(
-                    Alert.AlertType.ERROR,
-                    "Invalid Input",
-                    "Trip ID and capacity must be valid numbers."
-            );
-        }
+    @FXML
+    private void handleDashboard(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/AdminDashboard.fxml", 1100, 700);
     }
 
     @FXML
-    private void handleUpdateStatus() {
-
-        Trip selectedTrip =
-                tripListView
-                        .getSelectionModel()
-                        .getSelectedItem();
-
-        String selectedStatus =
-                statusComboBox.getValue();
-
-        if (selectedTrip == null
-                || selectedStatus == null) {
-
-            showAlert(
-                    Alert.AlertType.WARNING,
-                    "Missing Selection",
-                    "Please select a trip and status."
-            );
-
-            return;
-        }
-
-        selectedTrip.updateStatus(selectedStatus);
-
-        tripListView.refresh();
-
-        showAlert(
-                Alert.AlertType.INFORMATION,
-                "Trip Updated",
-                "Trip status updated to "
-                        + selectedStatus
-        );
+    private void handleRouteManagement(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/RouteManagement.fxml", 1100, 700);
     }
 
     @FXML
-    private void handleDeleteTrip() {
-
-        Trip selectedTrip =
-                tripListView
-                        .getSelectionModel()
-                        .getSelectedItem();
-
-        if (selectedTrip == null) {
-
-            showAlert(
-                    Alert.AlertType.WARNING,
-                    "No Selection",
-                    "Please select a trip to delete."
-            );
-
-            return;
-        }
-
-        trips.remove(selectedTrip);
+    private void handleScheduleManagement(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/ScheduleManagement.fxml", 1100, 700);
     }
 
-    private void clearFields() {
-
-        tripIdField.clear();
-        capacityField.clear();
-
-        routeComboBox.getSelectionModel()
-                .clearSelection();
-
-        scheduleComboBox.getSelectionModel()
-                .clearSelection();
-
-        statusComboBox.setValue(Trip.SCHEDULED);
+    @FXML
+    private void handleTripManagement(ActionEvent event) {
+        // Already on this page
     }
 
-    private void showAlert(
-            Alert.AlertType type,
-            String title,
-            String message) {
+    @FXML
+    private void handleRoutes(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/RouteManagement.fxml", 1100, 700);
+    }
 
-        Alert alert = new Alert(type);
-
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-
-        alert.showAndWait();
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        userSession.clearSession();
+        viewNavigator.navigateTo(event, "/fxml/Login.fxml", 900, 600);
     }
 }

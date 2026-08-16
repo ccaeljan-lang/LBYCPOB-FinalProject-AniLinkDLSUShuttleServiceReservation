@@ -96,12 +96,73 @@ public class LineManagementController {
         new Thread(task).start();
     }
 
-    // Add and Delete handlers temporarily omitted here for brevity (they remain mostly unchanged until Commit 3)
     @FXML
-    private void handleAddLine() { /* Unchanged from Commit 1 */ }
+    private void handleAddLine() {
+        String locationA = locationAField.getText().trim();
+        String locationB = locationBField.getText().trim();
+
+        if (locationA.isEmpty() || locationB.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Missing Information", "Please fill in Origin (Location A) and Destination (Location B).");
+            return;
+        }
+
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                supabaseService.createRoute(locationA, locationB);
+                return null;
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            loadRoutesAsync();
+            handleClearFields();
+            showAlert(Alert.AlertType.INFORMATION, "Line Added", "The route was successfully created in the database.");
+        });
+
+        task.setOnFailed(e -> {
+            if (task.getException() != null) {
+                task.getException().printStackTrace();
+            }
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to save the new route.");
+        });
+
+        new Thread(task).start();
+    }
 
     @FXML
-    private void handleDeleteLine() { /* Unchanged from Commit 1 */ }
+    private void handleDeleteLine() {
+        int selectedIndex = lineListView.getSelectionModel().getSelectedIndex();
+
+        if (selectedIndex < 0 || selectedIndex >= routeIds.size()) {
+            showAlert(Alert.AlertType.WARNING, "No Selection", "Please select a route to delete.");
+            return;
+        }
+
+        Long selectedRouteId = routeIds.get(selectedIndex);
+
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                supabaseService.deleteRoute(selectedRouteId);
+                return null;
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            loadRoutesAsync();
+            showAlert(Alert.AlertType.INFORMATION, "Line Deleted", "The route was removed successfully.");
+        });
+
+        task.setOnFailed(e -> {
+            if (task.getException() != null) {
+                task.getException().printStackTrace();
+            }
+            showAlert(Alert.AlertType.ERROR, "Delete Failed", "Cannot delete route. It may be linked to active schedules or trips.");
+        });
+
+        new Thread(task).start();
+    }
 
     @FXML
     private void handleClearFields() {
@@ -110,6 +171,7 @@ public class LineManagementController {
         locationBField.clear();
     }
 
+    // Navigation Action Handlers
     @FXML
     private void handleDashboard(ActionEvent event) {
         viewNavigator.navigateTo(event, "/fxml/AdminDashboard.fxml", 1000, 650);

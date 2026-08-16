@@ -35,4 +35,26 @@ public class PassengerDashboardController {
             passengerNameLabel.setText("Welcome, " + user.getName());
         }
     }
+
+    // Navigation Handlers
+    @FXML
+    private void handleHome(ActionEvent event) {
+        // Already on Home/Dashboard view
+    }
+
+    @FXML
+    private void handleReservations(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/Reservation.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleBookSelectedTrip(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/MyReservations.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        userSession.clearSession();
+        viewNavigator.navigateTo(event, "/fxml/Login.fxml", 900, 600);
+    }
 }

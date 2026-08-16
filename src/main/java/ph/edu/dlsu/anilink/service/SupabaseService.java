@@ -196,6 +196,71 @@ public class SupabaseService {
                 .body(String.class);
     }
 
+    public String getRoutes() {
+        return restClient.get()
+                .uri("/routes?select=*")
+                .retrieve()
+                .body(String.class);
+    }
+
+
+    // REPLACES THE OLD registerPassenger METHOD
+    public String registerAccount(String name, String email, String password, String role, String extraDetail) {
+        java.util.Map<String, Object> payload = new java.util.HashMap<>();
+        payload.put("name", name);
+        payload.put("email", email);
+        payload.put("password", password);
+        payload.put("role", role);
+
+
+        // Map the extra detail to the correct column so findUserByEmail doesn't crash later
+        if ("PASSENGER".equalsIgnoreCase(role)) {
+            payload.put("category", extraDetail); // e.g., "STUDENT"
+        } else if ("DRIVER".equalsIgnoreCase(role)) {
+            payload.put("license_number", "PENDING-" + System.currentTimeMillis()); // Default placeholder license
+        } else if ("ADMINISTRATOR".equalsIgnoreCase(role)) {
+            payload.put("admin_level", "STANDARD"); // Default admin level
+        }
+
+
+        return restClient.post()
+                .uri("/users")
+                .header("Prefer", "return=representation")
+                .body(payload)
+                .retrieve()
+                .body(String.class);
+    }
+
+
+    public String getTrips() {
+        return restClient.get()
+                .uri("/trips?select=*")
+                .retrieve()
+                .body(String.class);
+    }
+
+
+    public void updateTripStatus(Long tripId, String status) {
+        restClient.patch()
+                .uri("/trips?id=eq." + tripId)
+                .body(java.util.Map.of("status", status))
+                .retrieve()
+                .toBodilessEntity();
+    }
+
+
+    public String getTripsByDriver(Long driverId) throws Exception {
+        return restClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/trips")
+                        .queryParam("driver_id", "eq." + driverId)
+                        .queryParam("limit", "1")
+                        .queryParam("select", "*,route:routes(*),schedule:departure_schedules(*)")
+                        .build())
+                .retrieve()
+                .body(String.class);
+    }
+
     public void deleteSchedule(Long scheduleId) {
         restClient.delete()
                 .uri("/departure_schedules?id=eq." + scheduleId)

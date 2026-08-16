@@ -40,7 +40,7 @@ public class RegisterController {
     @FXML
     private void initialize() {
         categoryComboBox.setItems(FXCollections.observableArrayList(
-                "STUDENT", "FACULTY", "STAFF"
+                "STUDENT", "ADMIN", "DRIVER"
         ));
     }
 
@@ -48,10 +48,10 @@ public class RegisterController {
     private void handleRegister() {
         String name = nameField.getText().trim();
         String email = emailField.getText().trim();
-        String category = categoryComboBox.getValue();
+        String selection = categoryComboBox.getValue();
         String password = passwordField.getText();
 
-        if (name.isEmpty() || email.isEmpty() || password.isEmpty() || category == null) {
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty() || selection == null) {
             showMessage("Please fill in all required fields.", true);
             return;
         }
@@ -62,7 +62,8 @@ public class RegisterController {
         }
 
         try {
-            supabaseService.registerPassenger(name, email, password, category);
+            // Temporarily still using the old method name
+            supabaseService.registerPassenger(name, email, password, selection);
             showMessage("Account created successfully!", false);
             handleGoToLogin();
         } catch (org.springframework.web.client.HttpStatusCodeException e) {

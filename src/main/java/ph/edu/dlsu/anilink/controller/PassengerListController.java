@@ -89,9 +89,31 @@ public class PassengerListController {
         new Thread(task).start();
     }
 
+    // Navigation Handlers
+    @FXML
+    private void handleDashboard(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/DriverDashboard.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleTripDetails(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/TripDetails.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleScanQR(ActionEvent event) {
+        viewNavigator.navigateTo(event, "/fxml/QRScanner.fxml", 1000, 650);
+    }
+
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        userSession.clearSession();
+        viewNavigator.navigateTo(event, "/fxml/Login.fxml", 900, 600);
+    }
+
     @FXML
     private void handleBack(ActionEvent event) {
-        System.out.println("Returning to trip details...");
+        viewNavigator.navigateTo(event, "/fxml/DriverDashboard.fxml", 1000, 650);
     }
 
     private void showAlert(String title, String message) {

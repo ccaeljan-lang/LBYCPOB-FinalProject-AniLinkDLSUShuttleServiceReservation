@@ -1,58 +1,42 @@
 package ph.edu.dlsu.anilink.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Administrator extends User {
 
-    private String adminLevel;
+    private String department;
 
+    public Administrator() {
+        super();
+    }
+
+    @JsonCreator
     public Administrator(
-            Long userId,
-            String name,
-            String email,
-            String password,
-            String adminLevel) {
-
+            @JsonProperty("id") Long userId,
+            @JsonProperty("name") String name,
+            @JsonProperty("email") String email,
+            @JsonProperty("password") String password,
+            @JsonProperty("department") String department) {
         super(userId, name, email, password);
-        setAdminLevel(adminLevel);
+        this.department = department;
     }
 
-    public String getAdminLevel() {
-        return adminLevel;
+    public String getDepartment() {
+        return department;
     }
 
-    public void setAdminLevel(String adminLevel) {
-        if (adminLevel == null || adminLevel.trim().isEmpty()) {
-            throw new IllegalArgumentException("Admin level cannot be empty.");
-        }
-
-        this.adminLevel = adminLevel.trim();
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
     @Override
     public String getRole() {
-        return "ADMINISTRATOR";
+        return "ADMIN";
     }
 
-    public void createRoute(Route route) {
-        if (route == null) {
-            throw new IllegalArgumentException("Route cannot be null.");
-        }
-    }
-
-    public void createSchedule(DepartureSchedule schedule) {
-        if (schedule == null) {
-            throw new IllegalArgumentException("Schedule cannot be null.");
-        }
-    }
-
-    public void assignDriver(Driver driver, Trip trip) {
-        if (driver == null) {
-            throw new IllegalArgumentException("Driver cannot be null.");
-        }
-
-        if (trip == null) {
-            throw new IllegalArgumentException("Trip cannot be null.");
-        }
-
-        driver.assignTrip(trip);
+    @Override
+    public String toString() {
+        return getName() + " (Admin)";
     }
 }

@@ -1,5 +1,6 @@
 package ph.edu.dlsu.anilink.controller;
 
+import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -50,38 +51,75 @@ public class QRCodeController {
         }
     }
 
-    // Temporary old sync logic
     public void setReservation(Reservation reservation) {
         this.reservation = reservation;
 
         if (reservation == null) {
+            status.setText("No reservation selected");
             return;
         }
 
-        reservationCode.setText("Reservation Code: " + reservation.getReservationId());
-        passengerName.setText("Passenger: " + reservation.getPassenger().getName());
-        route.setText("Route: " + reservation.getTrip().getRoute());
-        departureTime.setText("Departure: " + reservation.getTrip().getSchedule());
-        status.setText("Status: " + reservation.getStatus());
+        reservationCode.setText("Reservation Code: " + (reservation.getReservationId() != null ? reservation.getReservationId() : "N/A"));
 
-        generateQRCode();
+        if (reservation.getPassenger() != null) {
+            passengerName.setText("Passenger: " + reservation.getPassenger().getName());
+        } else {
+            passengerName.setText("Passenger: Unknown");
+        }
+
+        if (reservation.getTrip() != null && reservation.getTrip().getRoute() != null) {
+            String origin = reservation.getTrip().getRoute().getOrigin();
+            String destination = reservation.getTrip().getRoute().getDestination();
+            route.setText("Route: " + origin + " ↔ " + destination);
+        } else {
+            route.setText("Route: N/A");
+        }
+
+        if (reservation.getTrip() != null && reservation.getTrip().getSchedule() != null) {
+            departureTime.setText("Departure: " + reservation.getTrip().getSchedule().getDepartureTime());
+        } else {
+            departureTime.setText("Departure: N/A");
+        }
+
+        status.setText(reservation.getStatus() != null ? reservation.getStatus() : "WAITLISTED");
+
+        generateQRCodeAsync();
     }
 
-    private void generateQRCode() {
+    private void generateQRCodeAsync() {
         if (reservation == null) {
-            status.setText("Status: No reservation selected");
+            status.setText("No reservation selected");
             return;
         }
 
-        BufferedImage bufferedImage = qrService.generateQRCode(reservation);
+        Task<Image> task = new Task<>() {
+            @Override
+            protected Image call() throws Exception {
+                BufferedImage bufferedImage = qrService.generateQRCode(reservation);
+                if (bufferedImage != null) {
+                    return SwingFXUtils.toFXImage(bufferedImage, null);
+                }
+                return null;
+            }
+        };
 
-        if (bufferedImage == null) {
-            status.setText("Status: QR generation failed");
-            return;
-        }
+        task.setOnSucceeded(e -> {
+            Image image = task.getValue();
+            if (image != null) {
+                qrCode.setImage(image);
+            } else {
+                status.setText("QR generation failed");
+            }
+        });
 
-        Image image = SwingFXUtils.toFXImage(bufferedImage, null);
-        qrCode.setImage(image);
+        task.setOnFailed(e -> {
+            if (task.getException() != null) {
+                task.getException().printStackTrace();
+            }
+            status.setText("Error rendering QR Code");
+        });
+
+        new Thread(task).start();
     }
 
     @FXML

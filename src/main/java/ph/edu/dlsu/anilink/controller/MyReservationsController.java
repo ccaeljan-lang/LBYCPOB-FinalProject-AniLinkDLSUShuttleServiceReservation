@@ -1,17 +1,23 @@
 package ph.edu.dlsu.anilink.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.springframework.stereotype.Controller;
+import ph.edu.dlsu.anilink.model.User;
 import ph.edu.dlsu.anilink.service.SupabaseService;
 import ph.edu.dlsu.anilink.util.UserSession;
 import ph.edu.dlsu.anilink.util.ViewNavigator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class MyReservationsController {
@@ -41,7 +47,13 @@ public class MyReservationsController {
 
     @FXML
     private void initialize() {
+        User currentUser = userSession.getCurrentUser();
+        if (currentUser != null && passengerNameLabel != null) {
+            passengerNameLabel.setText("Welcome, " + currentUser.getName());
+        }
+
         setupTableColumns();
+        loadReservationsAsync();
     }
 
     private void setupTableColumns() {
@@ -52,6 +64,61 @@ public class MyReservationsController {
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         reservationTable.setItems(reservationList);
+    }
+
+    private void loadReservationsAsync() {
+        User currentUser = userSession.getCurrentUser();
+        if (currentUser == null) {
+            return;
+        }
+
+        Task<List<ReservationItem>> task = new Task<>() {
+            @Override
+            protected List<ReservationItem> call() throws Exception {
+                List<ReservationItem> fetchedItems = new ArrayList<>();
+                String json = supabaseService.getReservationsByPassenger(currentUser.getUserId());
+                JsonNode array = objectMapper.readTree(json);
+
+                if (array.isArray()) {
+                    for (JsonNode node : array) {
+                        long id = node.path("id").asLong();
+                        String status = node.path("status").asText("WAITLISTED");
+                        String createdAt = node.path("created_at").asText("").split("T")[0];
+
+                        JsonNode trip = node.path("trip");
+                        JsonNode route = trip.path("route");
+                        JsonNode schedule = trip.path("schedule");
+
+                        String origin = route.path("origin").asText("Unknown");
+                        String destination = route.path("destination").asText("Unknown");
+                        String routeText = origin + " ↔ " + destination;
+                        String departureTime = schedule.path("departure_time").asText("N/A");
+
+                        fetchedItems.add(new ReservationItem(
+                                "RES-" + id,
+                                routeText,
+                                createdAt,
+                                departureTime,
+                                status
+                        ));
+                    }
+                }
+                return fetchedItems;
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            reservationList.clear();
+            reservationList.addAll(task.getValue());
+        });
+
+        task.setOnFailed(e -> {
+            if (task.getException() != null) {
+                task.getException().printStackTrace();
+            }
+        });
+
+        new Thread(task).start();
     }
 
     // Inner Model for Table Binding

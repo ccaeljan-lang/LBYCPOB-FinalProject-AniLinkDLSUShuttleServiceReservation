@@ -120,6 +120,22 @@ public class PassengerDashboardController {
                 return tripHistory;
             }
         };
+
+        task.setOnSucceeded(e -> {
+            if (tripsListView != null) {
+                tripsListView.getItems().clear();
+                tripsListView.getItems().addAll(task.getValue());
+            }
+        });
+
+        task.setOnFailed(e -> {
+            if (task.getException() != null) {
+                task.getException().printStackTrace();
+            }
+            showAlert("Database Error", "Failed to retrieve passenger reservations.");
+        });
+
+        new Thread(task).start();
     }
 
     // Navigation Handlers
@@ -142,5 +158,15 @@ public class PassengerDashboardController {
     private void handleLogout(ActionEvent event) {
         userSession.clearSession();
         viewNavigator.navigateTo(event, "/fxml/Login.fxml", 900, 600);
+    }
+
+    private void showAlert(String title, String message) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
     }
 }

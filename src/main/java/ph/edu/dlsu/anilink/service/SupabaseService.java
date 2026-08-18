@@ -553,5 +553,10 @@ public class SupabaseService {
                 .retrieve()
                 .body(String.class);
     }
-
+    public String getReservationsByTripId(Long tripId) {
+        return restClient.get()
+                .uri("/reservations?trip_id=eq." + tripId + "&select=*,passenger:users(*)")
+                .retrieve()
+                .body(String.class);
+    }
 }

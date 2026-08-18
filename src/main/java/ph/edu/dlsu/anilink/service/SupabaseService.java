@@ -12,6 +12,17 @@ import ph.edu.dlsu.anilink.model.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Core service interacting directly with the Supabase PostgREST API.
+ *
+ * <p>Key components:
+ * <ul>
+ *   <li><b>REST Integration:</b> Uses Spring's {@link RestClient} to execute HTTP operations against Supabase endpoints.</li>
+ *   <li><b>User Deserialization:</b> Maps raw JSON records into concrete {@link User} domain instances based on role types.</li>
+ *   <li><b>Domain Operations:</b> Provides CRUD operations across users, routes, schedules, trips, and reservations.</li>
+ * </ul>
+ * </p>
+ */
 @Service
 public class SupabaseService {
 

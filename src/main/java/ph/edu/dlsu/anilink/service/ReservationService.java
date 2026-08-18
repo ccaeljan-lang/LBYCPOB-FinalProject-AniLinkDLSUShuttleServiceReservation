@@ -10,6 +10,20 @@ import ph.edu.dlsu.anilink.model.User;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service managing reservation lifecycles, validation, and Supabase synchronization.
+ *
+ * <p>Key components:
+ * <ul>
+ *   <li><b>Validation:</b> Delegates pre-booking rules to {@link BookingValidationService}.</li>
+ *   <li><b>QR Generation:</b> Assigns unique UUID payloads for boarding verification.</li>
+ *   <li><b>Persistence:</b> Atomically updates trip seat counts prior to persisting reservations to prevent overbooking.</li>
+ * </ul>
+ * </p>
+ *
+ * @see ph.edu.dlsu.anilink.service.SupabaseService
+ * @see ph.edu.dlsu.anilink.service.BookingValidationService
+ */
 @Service
 public class ReservationService {
 
@@ -25,13 +39,9 @@ public class ReservationService {
     }
 
     public boolean canBook(User user, Trip trip) {
-        if (user == null || trip == null) {
+        if (user == null || trip == null || trip.isFull()) {
             return false;
         }
-
-        if (trip.isFull()) {
-            return false;
-
         return bookingValidationService.validateBooking(user, trip).isValid();
     }
 
@@ -39,7 +49,6 @@ public class ReservationService {
         if (user == null || trip == null) {
             return "Invalid passenger or trip selected.";
         }
-
         if (trip.isFull()) {
             return "This trip is already fully booked.";
         }
@@ -58,14 +67,18 @@ public class ReservationService {
         String qrPayload = "ANILINK-RES-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 
         try {
-            // 1. Post reservation to Supabase and get back the created JSON record
+            // 1. Reserve seat in Supabase first (if this fails, no reservation record is created)
+            int updatedSeats = trip.getSeatsTaken() + 1;
+            supabaseService.updateTripSeatsTaken(trip.getTripId(), updatedSeats);
+
+            // 2. Post reservation record to Supabase
             String responseJson = supabaseService.postReservation(
                     user.getUserId(),
                     trip.getTripId(),
                     qrPayload
             );
 
-            // 2. Parse returned created record array from Supabase
+            // 3. Parse created reservation response
             List<Reservation> createdList = objectMapper.readValue(
                     responseJson,
                     new TypeReference<List<Reservation>>() {}
@@ -75,16 +88,14 @@ public class ReservationService {
                 throw new RuntimeException("Failed to retrieve created reservation record from Supabase.");
             }
 
-            // 3. Increment seats_taken in Supabase
-            int updatedSeats = trip.getSeatsTaken() + 1;
-            supabaseService.updateTripSeatsTaken(trip.getTripId(), updatedSeats);
+            // 4. Update local trip object state only after both remote calls succeed
             trip.setSeatsTaken(updatedSeats);
 
             return createdList.get(0);
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Unable to save reservation to Supabase.", e);
+            throw new RuntimeException("Unable to save reservation to Supabase: " + e.getMessage(), e);
         }
     }
 }

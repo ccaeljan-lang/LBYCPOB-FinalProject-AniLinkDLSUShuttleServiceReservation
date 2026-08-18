@@ -1,5 +1,6 @@
 package ph.edu.dlsu.anilink.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -7,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import org.springframework.stereotype.Controller;
 import ph.edu.dlsu.anilink.model.User;
+import ph.edu.dlsu.anilink.service.SupabaseService;
 import ph.edu.dlsu.anilink.util.UserSession;
 import ph.edu.dlsu.anilink.util.ViewNavigator;
 
@@ -23,18 +25,20 @@ import ph.edu.dlsu.anilink.util.ViewNavigator;
  */
 @Controller
 public class PassengerDashboardController {
-
+    private final SupabaseService supabaseService;
     private final UserSession userSession;
     private final ViewNavigator viewNavigator;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @FXML private Label passengerNameLabel;
     @FXML private Label currentTrip;
     @FXML private Label currentStatus;
-    @FXML private ListView<?> tripsListView;
+    @FXML private ListView<String> tripsListView;
     @FXML private Button bookTripButton;
     @FXML private Button logoutButton;
 
-    public PassengerDashboardController(UserSession userSession, ViewNavigator viewNavigator) {
+    public PassengerDashboardController(SupabaseService supabaseService, UserSession userSession, ViewNavigator viewNavigator) {
+        this.supabaseService = supabaseService;
         this.userSession = userSession;
         this.viewNavigator = viewNavigator;
     }
@@ -42,8 +46,11 @@ public class PassengerDashboardController {
     @FXML
     private void initialize() {
         User user = userSession.getCurrentUser();
-        if (user != null && passengerNameLabel != null) {
-            passengerNameLabel.setText("Welcome, " + user.getName());
+        if (user != null) {
+            if (passengerNameLabel != null) {
+                passengerNameLabel.setText("Welcome, " + user.getName());
+            }
+            loadPassengerReservationsAsync(user.getUserId());
         }
     }
 

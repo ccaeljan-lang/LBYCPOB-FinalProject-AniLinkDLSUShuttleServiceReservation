@@ -17,6 +17,17 @@ import ph.edu.dlsu.anilink.util.ViewNavigator;
 
 import java.awt.image.BufferedImage;
 
+/**
+ * JavaFX controller for displaying reservation details and their corresponding QR codes.
+ * <p>
+ * This class handles the user interface for a passenger's reservation confirmation.
+ * It receives a specific {@link Reservation} object, updates the UI with the trip
+ * and passenger details, and asynchronously generates a QR code image using
+ * {@link QRService} to prevent blocking the JavaFX Application Thread. It also
+ * provides navigation handlers to return to the dashboard or access other passenger
+ * modules using the {@link ViewNavigator}.
+ * </p>
+ */
 @Controller
 public class QRCodeController {
 

@@ -19,6 +19,17 @@ import ph.edu.dlsu.anilink.util.ViewNavigator;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * JavaFX controller for the Route Management view.
+ * <p>
+ * This class provides an administrative interface for managing transportation routes.
+ * It allows administrators to asynchronously retrieve, create, and delete routes
+ * (consisting of origin and destination locations) using the {@link SupabaseService}.
+ * All database operations are executed on background tasks to prevent blocking the
+ * JavaFX Application Thread, ensuring a responsive user interface. Additionally, it
+ * handles sidebar navigation to other administrative modules via the {@link ViewNavigator}.
+ * </p>
+ */
 @Controller
 public class RouteManagementController {
 

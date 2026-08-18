@@ -15,6 +15,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST controller for managing users.
+ * <p>
+ * This class exposes API endpoints under {@code /api/users} to handle client
+ * requests related to {@link User} data. It provides operations to retrieve all users,
+ * fetch specific users by their ID or email address, create new users, and delete
+ * existing ones. The controller handles polymorphic user creation for different
+ * roles such as {@link Passenger}, {@link Driver}, and {@link Administrator}.
+ * It relies on {@link SupabaseService} to perform the necessary database interactions.
+ * </p>
+ */
 @RestController("apiUserController")
 @RequestMapping("/api/users")
 public class UserController {

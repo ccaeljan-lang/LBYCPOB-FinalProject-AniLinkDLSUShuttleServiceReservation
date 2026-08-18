@@ -28,6 +28,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * JavaFX controller for the passenger reservation booking view.
+ * <p>
+ * This class manages the user interface where passengers can browse available routes,
+ * select travel dates, and choose specific trip schedules. It relies on {@link SupabaseService}
+ * to asynchronously fetch real-time routing and schedule data. Upon reservation submission,
+ * it validates the booking request via {@link BookingValidationService}, posts the reservation
+ * to the database, updates seat availability, and generates a unique QR code boarding pass
+ * using {@link QRCodeGenerator}. It also handles navigation to other passenger-centric
+ * views using the {@link ViewNavigator}.
+ * </p>
+ */
 @Controller
 public class ReservationController {
 

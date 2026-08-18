@@ -16,12 +16,14 @@ import ph.edu.dlsu.anilink.util.UserSession;
 import ph.edu.dlsu.anilink.util.ViewNavigator;
 
 /**
- * Controller class managing the trip details view in the AniLink application.
- *
- * <p>This controller handles displaying active trip details assigned to a driver,
- * including route information, departure schedule, capacity usage, and trip status.
- * It coordinates asynchronous data fetching from Supabase via {@link SupabaseService}
- * and manages seamless scene navigation using {@link ViewNavigator}.</p>
+ * JavaFX controller for the Trip Details view.
+ * <p>
+ * This class manages the user interface for displaying active trip details assigned to a driver.
+ * It handles the presentation of route information, departure schedules, real-time capacity usage,
+ * and current trip status. The controller coordinates asynchronous data fetching from the database
+ * via {@link SupabaseService} to prevent UI blocking, and manages seamless scene navigation
+ * to related modules (like the passenger manifest) using the {@link ViewNavigator}.
+ * </p>
  *
  * @author AniLink Development Team
  * @version 1.0
@@ -29,7 +31,6 @@ import ph.edu.dlsu.anilink.util.ViewNavigator;
  * @see ph.edu.dlsu.anilink.util.UserSession
  * @see ph.edu.dlsu.anilink.util.ViewNavigator
  */
-
 @Controller
 public class TripDetailsController {
 

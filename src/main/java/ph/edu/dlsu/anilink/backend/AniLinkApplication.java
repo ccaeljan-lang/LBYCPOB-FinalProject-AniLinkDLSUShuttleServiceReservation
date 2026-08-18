@@ -6,6 +6,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+/**
+ * The main entry point for the AniLink Spring Boot application.
+ * <p>
+ * This class is responsible for bootstrapping the application context and
+ * starting the embedded web server. It also provides base configuration beans,
+ * such as a custom {@link ObjectMapper} that supports the Java 8 Date/Time API (JSR-310).
+ * </p>
+ */
 @SpringBootApplication(scanBasePackages = "ph.edu.dlsu.anilink")
 public class AniLinkApplication {
 

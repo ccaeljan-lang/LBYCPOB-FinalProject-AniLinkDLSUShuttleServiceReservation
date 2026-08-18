@@ -17,6 +17,17 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import ph.edu.dlsu.anilink.service.SupabaseService;
 
+/**
+ * JavaFX controller for the user registration view.
+ * <p>
+ * This class manages the user interface for creating new accounts. It captures
+ * user input, performs data validation (such as enforcing the use of DLSU email addresses),
+ * and maps the selected user category (Student, Admin, Driver) to the corresponding
+ * system role. The registration process delegates data persistence to the
+ * {@link SupabaseService}. Furthermore, it utilizes the Spring {@link ApplicationContext}
+ * to act as a controller factory when transitioning back to the Login scene.
+ * </p>
+ */
 @Controller
 public class RegisterController {
 

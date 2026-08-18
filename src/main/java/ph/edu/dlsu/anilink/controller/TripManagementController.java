@@ -23,6 +23,18 @@ import ph.edu.dlsu.anilink.util.ViewNavigator;
 
 import java.util.List;
 
+/**
+ * JavaFX controller for the Trip Management view.
+ * <p>
+ * This class provides an administrative interface for creating and managing operational trips.
+ * It allows administrators to construct a {@link Trip} by associating an existing {@link Route},
+ * {@link DepartureSchedule}, and driver (a {@link User} with a driver role). Additionally,
+ * it supports updating trip statuses, dynamically reassigning drivers, and deleting trips.
+ * All data retrieval and mutation operations are executed asynchronously via {@link SupabaseService}
+ * to maintain a responsive user interface. It also handles seamless navigation to other admin
+ * modules using the {@link ViewNavigator}.
+ * </p>
+ */
 @Controller
 public class TripManagementController {
 

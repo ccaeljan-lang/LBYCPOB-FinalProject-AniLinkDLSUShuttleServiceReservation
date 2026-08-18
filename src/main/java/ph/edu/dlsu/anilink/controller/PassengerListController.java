@@ -20,7 +20,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controller for displaying the passenger manifest of a specific trip.
+ * JavaFX controller for the Passenger List (Manifest) view.
+ * <p>
+ * This class manages the user interface for displaying the passenger manifest
+ * of a specific trip. It is typically accessed by driver or administrative users.
+ * The controller asynchronously retrieves reservation data for a dynamically assigned
+ * trip ID using {@link SupabaseService}, filters and formats the passenger details,
+ * and safely populates a JavaFX {@link ListView} on the UI thread. It also provides
+ * navigation handlers via the {@link ViewNavigator} to return to the trip details,
+ * access the QR scanner, or navigate back to the dashboard.
+ * </p>
  */
 @Controller
 public class PassengerListController {

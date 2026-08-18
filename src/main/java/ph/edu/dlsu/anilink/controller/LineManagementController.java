@@ -21,6 +21,16 @@ import ph.edu.dlsu.anilink.util.ViewNavigator;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * JavaFX controller for the Line (Route) Management view.
+ * <p>
+ * This class provides an administrative interface for managing transportation routes.
+ * It allows administrators to asynchronously load, add, and delete routes containing
+ * origin and destination locations via the {@link SupabaseService}. The controller
+ * ensures that long-running database operations do not block the UI by using background tasks,
+ * and handles view transitions using the {@link ViewNavigator}.
+ * </p>
+ */
 @Controller
 public class LineManagementController {
 

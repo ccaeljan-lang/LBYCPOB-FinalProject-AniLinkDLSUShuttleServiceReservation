@@ -19,6 +19,9 @@ import ph.edu.dlsu.anilink.util.ViewNavigator;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller for displaying the passenger manifest of a specific trip.
+ */
 @Controller
 public class PassengerListController {
 
@@ -27,10 +30,20 @@ public class PassengerListController {
     private final ViewNavigator viewNavigator;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private Long activeTripId;
+
     @FXML private Label driverNameLabel;
+    @FXML private Label tripInfoLabel;
     @FXML private ListView<String> passengerListView;
     @FXML private Button backButton;
 
+    /**
+     * Constructs the PassengerListController with required services.
+     *
+     * @param supabaseService service for database operations
+     * @param userSession current user session state
+     * @param viewNavigator utility for scene transitions
+     */
     public PassengerListController(SupabaseService supabaseService,
                                    UserSession userSession,
                                    ViewNavigator viewNavigator) {
@@ -39,6 +52,9 @@ public class PassengerListController {
         this.viewNavigator = viewNavigator;
     }
 
+    /**
+     * Initializes the view and sets welcome text for the logged-in user.
+     */
     @FXML
     private void initialize() {
         User user = userSession.getCurrentUser();
@@ -46,30 +62,70 @@ public class PassengerListController {
             driverNameLabel.setText("Welcome, " + user.getName());
         }
 
-        loadPassengersAsync();
+        if (this.activeTripId != null) {
+            loadPassengersForTripAsync(this.activeTripId);
+        }
     }
 
-    private void loadPassengersAsync() {
+    /**
+     * Sets the target trip ID and triggers loading of reserved passengers.
+     *
+     * @param tripId unique ID of the selected trip
+     */
+    public void setTripId(Long tripId) {
+        this.activeTripId = tripId;
+        if (tripInfoLabel != null) {
+            tripInfoLabel.setText("Passenger Manifest — Trip #" + tripId);
+        }
+        loadPassengersForTripAsync(tripId);
+    }
+
+    /**
+     * Asynchronously retrieves reserved passengers for the given trip ID from Supabase.
+     *
+     * @param tripId unique ID of the selected trip
+     */
+    private void loadPassengersForTripAsync(Long tripId) {
         Task<List<String>> task = new Task<>() {
             @Override
             protected List<String> call() throws Exception {
                 List<String> passengersList = new ArrayList<>();
-                String json = supabaseService.getUsersByRole("PASSENGER");
-                JsonNode passengersArray = objectMapper.readTree(json);
 
-                if (passengersArray.isArray() && !passengersArray.isEmpty()) {
-                    for (JsonNode passenger : passengersArray) {
-                        long id = passenger.path("id").asLong();
-                        String name = passenger.path("name").asText("Unknown");
-                        String email = passenger.path("email").asText("N/A");
-                        String category = passenger.path("category").asText("STUDENT");
+                String json = supabaseService.getReservationsByTripId(tripId);
+                JsonNode reservationsArray = objectMapper.readTree(json);
 
-                        String displayText = String.format("#%d | %s (%s) — [%s]", id, name, email, category);
+                if (reservationsArray.isArray() && !reservationsArray.isEmpty()) {
+                    int count = 1;
+                    for (JsonNode reservation : reservationsArray) {
+                        String status = reservation.path("status").asText("CONFIRMED");
+
+                        if ("CANCELLED".equalsIgnoreCase(status)) {
+                            continue;
+                        }
+
+                        JsonNode passengerNode = reservation.has("passenger")
+                                ? reservation.path("passenger")
+                                : reservation.path("user");
+
+                        if (passengerNode.isMissingNode() || passengerNode.isNull()) {
+                            continue;
+                        }
+
+                        long passengerId = passengerNode.path("id").asLong();
+                        String name = passengerNode.path("name").asText("Unknown");
+                        String email = passengerNode.path("email").asText("N/A");
+                        String category = passengerNode.path("category").asText("STUDENT");
+
+                        String displayText = String.format("%d. #%d | %s (%s) — [%s] | Status: %s",
+                                count++, passengerId, name, email, category, status.toUpperCase());
                         passengersList.add(displayText);
                     }
-                } else {
-                    passengersList.add("No registered passengers found.");
                 }
+
+                if (passengersList.isEmpty()) {
+                    passengersList.add("No reserved passengers found for Trip #" + tripId + ".");
+                }
+
                 return passengersList;
             }
         };
@@ -83,39 +139,69 @@ public class PassengerListController {
             if (task.getException() != null) {
                 task.getException().printStackTrace();
             }
-            showAlert("Database Error", "Failed to retrieve passenger list from Supabase.");
+            showAlert("Database Error", "Failed to retrieve passenger manifest from Supabase.");
         });
 
         new Thread(task).start();
     }
 
-    // Navigation Handlers
+    /**
+     * Navigates to the Driver Dashboard scene.
+     *
+     * @param event button action event
+     */
     @FXML
     private void handleDashboard(ActionEvent event) {
         viewNavigator.navigateTo(event, "/fxml/DriverDashboard.fxml", 1000, 650);
     }
 
+    /**
+     * Navigates to the Trip Details scene.
+     *
+     * @param event button action event
+     */
     @FXML
     private void handleTripDetails(ActionEvent event) {
         viewNavigator.navigateTo(event, "/fxml/TripDetails.fxml", 1000, 650);
     }
 
+    /**
+     * Navigates to the QR Scanner scene.
+     *
+     * @param event button action event
+     */
     @FXML
     private void handleScanQR(ActionEvent event) {
         viewNavigator.navigateTo(event, "/fxml/QRScanner.fxml", 1000, 650);
     }
 
+    /**
+     * Logs out the user and navigates to the Login scene.
+     *
+     * @param event button action event
+     */
     @FXML
     private void handleLogout(ActionEvent event) {
         userSession.clearSession();
         viewNavigator.navigateTo(event, "/fxml/Login.fxml", 900, 600);
     }
 
+    /**
+     * Navigates back to the Trip Details scene.
+     *
+     * @param event button action event
+     */
     @FXML
     private void handleBack(ActionEvent event) {
-        viewNavigator.navigateTo(event, "/fxml/DriverDashboard.fxml", 1000, 650);
+        viewNavigator.navigateTo(event, "/fxml/TripDetails.fxml", 1000, 650);
     }
 
+    /**
+     * Displays an error alert dialog on the JavaFX Application Thread.
+     *
+     * @param title dialog title
+     * @param message error message content
+     */
     private void showAlert(String title, String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(Alert.AlertType.ERROR);

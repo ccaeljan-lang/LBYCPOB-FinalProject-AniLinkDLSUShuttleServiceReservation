@@ -10,6 +10,17 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import ph.edu.dlsu.anilink.backend.AniLinkApplication;
 
+/**
+ * Primary JavaFX application entry point integrated with Spring Boot initialization.
+ *
+ * <p>Key components:
+ * <ul>
+ *   <li><b>Context Bootstrapping:</b> Initializes {@link ConfigurableApplicationContext} via {@link SpringApplicationBuilder} with non-headless configuration.</li>
+ *   <li><b>Dependency Injection Integration:</b> Bridges Spring DI with JavaFX by wiring {@link FXMLLoader#setControllerFactory} to the application context.</li>
+ *   <li><b>Lifecycle Management:</b> Controls application startup, primary window setup, and clean context closure during teardown.</li>
+ * </ul>
+ * </p>
+ */
 public class Main extends Application {
 
     private ConfigurableApplicationContext applicationContext;

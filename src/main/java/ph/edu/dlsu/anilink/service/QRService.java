@@ -9,6 +9,19 @@ import ph.edu.dlsu.anilink.model.Reservation;
 
 import java.awt.image.BufferedImage;
 
+/**
+ * Service component responsible for QR code generation and payload verification in the AniLink system.
+ *
+ * <p>This service leverages ZXing library components to render optical barcodes for boarding verification.
+ * It encapsulates the following key capabilities:
+ * <ul>
+ *   <li><b>Spring Service Bean:</b> Managed as a singleton service component via {@link Service} for application injection.</li>
+ *   <li><b>Reservation QR Generation:</b> Converts a {@link Reservation}'s unique payload string into a renderable 2D QR image.</li>
+ *   <li><b>Payload Verification:</b> Validates incoming payload format standards (e.g., matching {@code ANILINK-RES-} prefixes or valid UUID/key lengths) during boarding scans.</li>
+ *   <li><b>ZXing BitMatrix Rendering:</b> Encodes arbitrary raw text strings directly into 2D raster {@link BufferedImage} graphics with customizable dimensional boundaries.</li>
+ * </ul>
+ * </p>
+ */
 @Service
 public class QRService {
 

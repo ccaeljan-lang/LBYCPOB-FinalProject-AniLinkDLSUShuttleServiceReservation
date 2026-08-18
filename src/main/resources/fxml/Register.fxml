@@ -21,7 +21,7 @@
     <VBox prefWidth="450" alignment="CENTER" style="-fx-background-color: #E0E0E0;">
         <ImageView fitWidth="450" fitHeight="600" preserveRatio="false">
             <image>
-                <Image url="@../images/bus.jpg" />
+                <Image url="@../images/bus.png" />
             </image>
         </ImageView>
     </VBox>

@@ -9,6 +9,19 @@ import ph.edu.dlsu.anilink.model.Trip;
 import ph.edu.dlsu.anilink.model.User;
 import ph.edu.dlsu.anilink.service.SupabaseService;
 
+/**
+ * Strategy validation rule component that enforces quota limits on active bookings per passenger.
+ *
+ * <p>This class implements {@link BookingRule} to prevent passengers from hoarding shuttle seats. It encapsulates:
+ * <ul>
+ *   <li><b>Quota Enforcement:</b> Restricts passengers to a maximum constant ({@code MAX_CATEGORY_BOOKINGS = 2}) of active bookings.</li>
+ *   <li><b>User Type Guard:</b> Verifies that the reserving {@link User} is an instance of {@link Passenger}.</li>
+ *   <li><b>Remote State Verification:</b> Injects {@link SupabaseService} and uses Jackson's {@link ObjectMapper}
+ *       to query live reservation records from PostgREST before validating eligibility.</li>
+ *   <li><b>Fault Tolerance:</b> Gracefully handles service query failures and updates failure messaging via {@link #getErrorMessage()}.</li>
+ * </ul>
+ * </p>
+ */
 @Component
 public class CategoryLimitRule implements BookingRule {
 

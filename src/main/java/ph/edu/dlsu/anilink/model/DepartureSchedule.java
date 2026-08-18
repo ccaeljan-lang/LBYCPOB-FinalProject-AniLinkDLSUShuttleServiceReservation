@@ -6,6 +6,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+
+/**
+ * Domain model representing a scheduled departure time within the AniLink system.
+ *
+ * <p>This class manages the timetable configuration for shuttle services. It encapsulates:
+ * <ul>
+ *   <li><b>Schedule Identification:</b> Unique database identifier ({@code scheduleId}) mapped via {@link JsonProperty}.</li>
+ *   <li><b>Route Binding:</b> The associated {@link Route} defining origin and destination terminals.</li>
+ *   <li><b>Temporal Data:</b> Departure time using {@link LocalTime}, serialized/deserialized with
+ *       {@link JsonFormat} in 24-hour {@code HH:mm:ss} format.</li>
+ *   <li><b>Capacity Constraints:</b> Standard passenger capacity limit configured for trips on this timetable.</li>
+ *   <li><b>String Formatting:</b> Human-readable output formatting 12-hour time (e.g., "08:30 AM")
+ *       with route information for UI components.</li>
+ * </ul>
+ * </p>
+ */
+
 public class DepartureSchedule {
 
     @JsonProperty("id")

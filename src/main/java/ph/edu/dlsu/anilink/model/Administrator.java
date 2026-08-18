@@ -15,10 +15,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *       to support direct JSON mapping during REST interactions with Supabase.</li>
  * </ul>
  * </p>
- *
- * @author AniLink Development Team
- * @version 1.0
- * @see ph.edu.dlsu.anilink.model.User
  */
 public class Administrator extends User {
 

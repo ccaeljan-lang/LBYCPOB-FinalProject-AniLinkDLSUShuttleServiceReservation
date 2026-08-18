@@ -15,6 +15,21 @@ import ph.edu.dlsu.anilink.service.SupabaseService;
 import ph.edu.dlsu.anilink.util.UserSession;
 import ph.edu.dlsu.anilink.util.ViewNavigator;
 
+/**
+ * Controller class managing the trip details view in the AniLink application.
+ *
+ * <p>This controller handles displaying active trip details assigned to a driver,
+ * including route information, departure schedule, capacity usage, and trip status.
+ * It coordinates asynchronous data fetching from Supabase via {@link SupabaseService}
+ * and manages seamless scene navigation using {@link ViewNavigator}.</p>
+ *
+ * @author AniLink Development Team
+ * @version 1.0
+ * @see ph.edu.dlsu.anilink.service.SupabaseService
+ * @see ph.edu.dlsu.anilink.util.UserSession
+ * @see ph.edu.dlsu.anilink.util.ViewNavigator
+ */
+
 @Controller
 public class TripDetailsController {
 
@@ -191,7 +206,22 @@ public class TripDetailsController {
 
     @FXML
     private void handleViewPassengers(ActionEvent event) {
-        viewNavigator.navigateTo(event, "/fxml/PassengerList.fxml", 1000, 650);
+        if (currentTripId == null) {
+            showAlert(Alert.AlertType.WARNING, "No Trip Selected", "Please wait for a valid trip to load.");
+            return;
+        }
+
+        // Load view and get controller instance directly
+        PassengerListController controller = viewNavigator.navigateToAndGetController(
+                event,
+                "/fxml/PassengerList.fxml",
+                1000,
+                650
+        );
+
+        if (controller != null) {
+            controller.setTripId(currentTripId);
+        }
     }
 
     @FXML

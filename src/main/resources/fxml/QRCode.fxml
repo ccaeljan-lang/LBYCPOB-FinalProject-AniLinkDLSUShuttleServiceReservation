@@ -49,7 +49,6 @@
             <Button onAction="#handleHome" prefHeight="40.0" prefWidth="190.0" styleClass="sidebar-btn" text="Home" />
             <Button onAction="#handleReservations" prefHeight="40.0" prefWidth="190.0" styleClass="sidebar-btn, sidebar-btn-active" text="Reservations" />
             <Button onAction="#handleTripHistory" prefHeight="40.0" prefWidth="190.0" styleClass="sidebar-btn" text="Trip History" />
-            <Button onAction="#handleProfile" prefHeight="40.0" prefWidth="190.0" styleClass="sidebar-btn" text="Profile" />
 
             <Region VBox.vgrow="ALWAYS" />
 

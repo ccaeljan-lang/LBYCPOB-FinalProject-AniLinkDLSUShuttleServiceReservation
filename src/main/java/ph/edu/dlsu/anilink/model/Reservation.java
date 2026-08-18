@@ -5,6 +5,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 
+/**
+ * Domain model representing a passenger reservation within the AniLink system.
+ *
+ * <p>This class manages ticket bookings and lifecycle state transitions for shuttle trips.
+ * It encapsulates the following components:
+ * <ul>
+ *   <li><b>Status Constants:</b> Enforces standard booking states ({@code CONFIRMED}, {@code WAITLISTED},
+ *       {@code VERIFIED}, {@code BOARDED}, {@code CANCELLED}, {@code COMPLETED}).</li>
+ *   <li><b>Domain Associations:</b> Binds the reserving {@link Passenger} to their requested {@link Trip}.</li>
+ *   <li><b>QR Code Integration:</b> Generates and stores a unique payload string ({@code qrPayload})
+ *       used for boarding verification scanners.</li>
+ *   <li><b>State Helper Methods:</b> Exposes clear state-transition logic ({@link #confirm()}, {@link #cancel()}, etc.)
+ *       to mutate booking status cleanly.</li>
+ *   <li><b>JSON Serialization:</b> Uses Jackson annotations ({@link JsonProperty}, {@link JsonFormat}) to map
+ *       fields like {@code created_at} and nested objects to Supabase REST payloads.</li>
+ * </ul>
+ * </p>
+ */
 public class Reservation {
 
     public static final String CONFIRMED = "CONFIRMED";

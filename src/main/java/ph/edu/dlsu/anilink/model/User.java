@@ -15,6 +15,23 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Driver.class, name = "DRIVER"),
         @JsonSubTypes.Type(value = Administrator.class, name = "ADMIN")
 })
+
+/**
+ * Abstract base domain model representing a user in the AniLink system.
+ *
+ * <p>This class serves as the root of the user hierarchy and encapsulates core identity attributes,
+ * validation routines, and Jackson polymorphic deserialization annotations. Key components include:
+ * <ul>
+ *   <li><b>Polymorphic Deserialization:</b> Annotated with {@link JsonTypeInfo} and {@link JsonSubTypes}
+ *       to automatically map JSON payloads into concrete subtypes ({@link Passenger}, {@link Driver},
+ *       or {@link Administrator}) based on the {@code role} property from Supabase.</li>
+ *   <li><b>Core Profile Attributes:</b> Encapsulates user ID ({@code id}), full name, credentials, and email.</li>
+ *   <li><b>Domain Validation:</b> Enforces business invariants, ensuring non-empty name and password fields,
+ *       as well as mandatory {@code @dlsu.edu.ph} email domain constraints.</li>
+ *   <li><b>Abstract Role Enforcement:</b> Declares {@link #getRole()} to mandate explicit role definition in subclasses.</li>
+ * </ul>
+ * </p>
+ */
 public abstract class User {
 
     @JsonProperty("id")

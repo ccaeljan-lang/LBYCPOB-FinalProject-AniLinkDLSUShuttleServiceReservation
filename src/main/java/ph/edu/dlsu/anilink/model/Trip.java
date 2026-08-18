@@ -6,6 +6,24 @@ import ph.edu.dlsu.anilink.interfaces.Trackable;
 
 import java.util.Objects;
 
+/**
+ * Domain model representing an active or scheduled shuttle trip within the AniLink system.
+ *
+ * <p>Implements {@link Trackable} to support real-time GPS location tracking and operational status updates.
+ * It encapsulates the following key components:
+ * <ul>
+ *   <li><b>Lifecycle Status Constants:</b> Defines standard trip operational states ({@code SCHEDULED},
+ *       {@code ARRIVING}, {@code BOARDING}, {@code IN_TRANSIT}, {@code DEPARTED}, {@code COMPLETED}, {@code CANCELLED}).</li>
+ *   <li><b>Relational Mappings:</b> Connects to associated domain entities including {@link Route},
+ *       {@link DepartureSchedule}, and assigned {@link Driver}.</li>
+ *   <li><b>Capacity & Seat Management:</b> Tracks maximum capacity and current occupied seats with business logic
+ *       methods ({@link #addPassenger()}, {@link #removePassenger()}, {@link #isFull()}) and Jackson-ignored helper calculations.</li>
+ *   <li><b>GPS Coordinates:</b> Stores latitude ({@code current_lat}) and longitude ({@code current_lng}) for live map tracking.</li>
+ *   <li><b>UI & Collection Compatibility:</b> Overrides {@link #equals(Object)} and {@link #hashCode()} on {@code tripId}
+ *       for accurate JavaFX control selection, alongside a detailed formatted {@link #toString()} representation.</li>
+ * </ul>
+ * </p>
+ */
 public class Trip implements Trackable {
 
     public static final String SCHEDULED = "SCHEDULED";

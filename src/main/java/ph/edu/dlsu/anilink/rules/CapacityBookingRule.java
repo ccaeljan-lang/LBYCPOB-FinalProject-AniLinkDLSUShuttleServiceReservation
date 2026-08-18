@@ -5,6 +5,18 @@ import ph.edu.dlsu.anilink.interfaces.BookingRule;
 import ph.edu.dlsu.anilink.model.Trip;
 import ph.edu.dlsu.anilink.model.User;
 
+/**
+ * Strategy validation rule component that verifies shuttle capacity before allowing a booking.
+ *
+ * <p>This class implements {@link BookingRule} to enforce vehicle seat limits. It encapsulates:
+ * <ul>
+ *   <li><b>Spring Component Managed:</b> Annotated with {@link Component} for automated dependency injection.</li>
+ *   <li><b>Null Safety Verification:</b> Ensures a valid {@link Trip} instance is present before evaluation.</li>
+ *   <li><b>Capacity Enforcement:</b> Compares occupied seats against max capacity to prevent overbooking.</li>
+ *   <li><b>Error Message State:</b> Maintains descriptive failure feedback via {@link #getErrorMessage()} when validation fails.</li>
+ * </ul>
+ * </p>
+ */
 @Component
 public class CapacityBookingRule implements BookingRule {
 

@@ -7,6 +7,17 @@ import ph.edu.dlsu.anilink.model.User;
 
 import java.util.List;
 
+/**
+ * Service component responsible for executing booking validation strategies.
+ *
+ * <p>Key components:
+ * <ul>
+ *   <li><b>Strategy Collection:</b> Automatically injects all Spring beans implementing {@link BookingRule}.</li>
+ *   <li><b>Rule Validation:</b> Evaluates passenger and trip combinations sequentially against configured business constraints.</li>
+ *   <li><b>Error Resolution:</b> Retrieves specific error feedback for failed validation rules.</li>
+ * </ul>
+ * </p>
+ */
 @Service
 public class ValidationRuleService {
 

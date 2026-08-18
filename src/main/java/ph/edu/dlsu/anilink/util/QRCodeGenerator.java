@@ -10,6 +10,16 @@ import javafx.scene.image.WritableImage;
 
 import java.awt.image.BufferedImage;
 
+/**
+ * Utility class for generating JavaFX-compatible QR code images.
+ *
+ * <p>Key components:
+ * <ul>
+ *   <li><b>ZXing Integration:</b> Encodes arbitrary string payloads into 2D matrix representations.</li>
+ *   <li><b>Image Conversion:</b> Translates AWT {@link BufferedImage} pixels into JavaFX {@link WritableImage} formats for UI rendering.</li>
+ * </ul>
+ * </p>
+ */
 public class QRCodeGenerator {
 
     public static Image generateQRCodeImage(String text, int width, int height) throws Exception {

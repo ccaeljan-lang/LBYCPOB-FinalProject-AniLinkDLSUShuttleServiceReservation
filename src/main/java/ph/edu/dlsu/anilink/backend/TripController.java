@@ -11,6 +11,16 @@ import ph.edu.dlsu.anilink.service.SupabaseService;
 
 import java.util.List;
 
+/**
+ * REST controller for managing trips.
+ * <p>
+ * This class exposes API endpoints under {@code /api/trips} to handle client
+ * requests related to {@link Trip} data. It provides operations to retrieve all trips,
+ * fetch a specific trip by its ID, create new trips, update a trip's status or
+ * geographical location (latitude/longitude), and delete trips. It relies on
+ * {@link SupabaseService} to interface with the database.
+ * </p>
+ */
 @RestController("apiTripController")
 @RequestMapping("/api/trips")
 public class TripController {

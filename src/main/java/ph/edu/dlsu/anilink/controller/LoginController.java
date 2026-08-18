@@ -13,6 +13,17 @@ import ph.edu.dlsu.anilink.service.SupabaseService;
 import ph.edu.dlsu.anilink.util.UserSession;
 import ph.edu.dlsu.anilink.util.ViewNavigator;
 
+/**
+ * JavaFX controller for the user login view.
+ * <p>
+ * This class handles user authentication by capturing login credentials from the UI
+ * and validating them against the database via {@link SupabaseService}. Upon a
+ * successful login, it establishes a user session using {@link UserSession} and
+ * dynamically routes the user to their role-specific dashboard (Admin, Driver,
+ * or Passenger) based on their {@link User} subclass utilizing the {@link ViewNavigator}.
+ * It also provides navigation to the registration view.
+ * </p>
+ */
 @Controller
 public class LoginController {
 

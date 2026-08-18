@@ -13,6 +13,17 @@ import ph.edu.dlsu.anilink.service.SupabaseService;
 import ph.edu.dlsu.anilink.util.UserSession;
 import ph.edu.dlsu.anilink.util.ViewNavigator;
 
+/**
+ * JavaFX controller for the Administrator Dashboard view.
+ * <p>
+ * This class manages the main dashboard interface for administrative users.
+ * It is responsible for asynchronously fetching and aggregating system statistics
+ * (such as total users, active trips, available seats, and reservations) via
+ * {@link SupabaseService}, and safely updating the UI components on the JavaFX
+ * Application Thread. Additionally, it handles UI navigation to other administrative
+ * modules like Route, Schedule, and Trip management using the {@link ViewNavigator}.
+ * </p>
+ */
 @Controller
 public class AdminDashboardController {
 

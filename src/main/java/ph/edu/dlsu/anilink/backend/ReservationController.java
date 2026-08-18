@@ -14,6 +14,16 @@ import ph.edu.dlsu.anilink.service.SupabaseService;
 
 import java.util.List;
 
+/**
+ * REST controller for managing passenger reservations.
+ * <p>
+ * This class exposes API endpoints under {@code /api/reservations} to handle client
+ * requests related to {@link Reservation} data. It provides functionality to retrieve all
+ * reservations, fetch a specific reservation by its ID, create new reservations, and cancel
+ * existing ones. It interacts with {@link ReservationService} for business logic and
+ * {@link SupabaseService} for data retrieval and updates.
+ * </p>
+ */
 @RestController("apiReservationController")
 @RequestMapping("/api/reservations")
 public class ReservationController {

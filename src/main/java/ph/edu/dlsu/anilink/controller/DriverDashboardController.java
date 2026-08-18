@@ -13,6 +13,17 @@ import ph.edu.dlsu.anilink.service.SupabaseService;
 import ph.edu.dlsu.anilink.util.UserSession;
 import ph.edu.dlsu.anilink.util.ViewNavigator;
 
+/**
+ * JavaFX controller for the Driver Dashboard view.
+ * <p>
+ * This class manages the main dashboard interface for driver users. It is
+ * responsible for displaying a personalized welcome message and asynchronously
+ * retrieving the driver's currently assigned active trip using {@link SupabaseService}.
+ * It safely updates the UI components on the JavaFX Application Thread. Additionally,
+ * it handles navigation to other driver-specific modules such as Trip Details and
+ * the QR Scanner using the {@link ViewNavigator}.
+ * </p>
+ */
 @Controller
 public class DriverDashboardController {
 

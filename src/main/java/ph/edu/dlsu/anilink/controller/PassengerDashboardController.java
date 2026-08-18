@@ -10,6 +10,17 @@ import ph.edu.dlsu.anilink.model.User;
 import ph.edu.dlsu.anilink.util.UserSession;
 import ph.edu.dlsu.anilink.util.ViewNavigator;
 
+/**
+ * JavaFX controller for the Passenger Dashboard view.
+ * <p>
+ * This class manages the main landing interface for passenger users. It retrieves
+ * the currently logged-in user from the {@link UserSession} to display a personalized
+ * welcome message and provides an overview of the user's trip status. Additionally,
+ * it handles user interactions and navigation to other passenger-specific modules,
+ * such as booking reservations, viewing reservation history, and logging out, using
+ * the {@link ViewNavigator}.
+ * </p>
+ */
 @Controller
 public class PassengerDashboardController {
 

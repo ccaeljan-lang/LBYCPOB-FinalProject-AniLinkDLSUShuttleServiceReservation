@@ -31,7 +31,6 @@ public class ReservationService {
 
         if (trip.isFull()) {
             return false;
-        }
 
         return bookingValidationService.validateBooking(user, trip).isValid();
     }

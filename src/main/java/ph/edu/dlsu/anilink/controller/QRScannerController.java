@@ -18,6 +18,18 @@ import ph.edu.dlsu.anilink.util.ViewNavigator;
 
 import java.util.Optional;
 
+/**
+ * JavaFX controller for the QR Scanner view.
+ * <p>
+ * This class handles the interface used by drivers to verify passenger reservations
+ * prior to boarding. It provides functionality to simulate scanning a QR code payload
+ * and asynchronously verifies the data against the database using {@link SupabaseService}.
+ * Based on the verification results, it updates the passenger's reservation status
+ * to "BOARDED", prevents duplicate boarding, and safely displays visual feedback and
+ * alerts on the JavaFX Application Thread. It also includes handlers for navigating
+ * to other driver-centric modules via the {@link ViewNavigator}.
+ * </p>
+ */
 @Controller
 public class QRScannerController {
 

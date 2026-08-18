@@ -10,6 +10,16 @@ import ph.edu.dlsu.anilink.service.SupabaseService;
 
 import java.util.List;
 
+/**
+ * REST controller for managing routes.
+ * <p>
+ * This class exposes API endpoints under {@code /api/routes} to handle client
+ * requests related to {@link Route} data. It provides CRUD operations to retrieve all routes,
+ * fetch a specific route by its ID, create new routes, and delete existing routes.
+ * The controller integrates with {@link SupabaseService} to perform the necessary
+ * database interactions.
+ * </p>
+ */
 @RestController("apiRouteController")
 @RequestMapping("/api/routes")
 public class RouteController {

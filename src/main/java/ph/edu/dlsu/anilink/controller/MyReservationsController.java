@@ -20,6 +20,17 @@ import ph.edu.dlsu.anilink.util.ViewNavigator;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * JavaFX controller for the passenger's My Reservations view.
+ * <p>
+ * This class manages the interface where a passenger can view their current
+ * and past reservations. It retrieves the logged-in user from the {@link UserSession},
+ * asynchronously fetches their specific reservation data via {@link SupabaseService},
+ * and populates a JavaFX {@link TableView} with the results. It also provides
+ * navigation functions to return to the dashboard, book new reservations, or
+ * log out using the {@link ViewNavigator}.
+ * </p>
+ */
 @Controller
 public class MyReservationsController {
 

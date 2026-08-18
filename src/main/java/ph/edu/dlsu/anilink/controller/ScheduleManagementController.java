@@ -25,6 +25,18 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * JavaFX controller for the Schedule Management view.
+ * <p>
+ * This class provides an administrative interface for managing departure schedules
+ * associated with specific transportation routes. It allows administrators to asynchronously
+ * retrieve, create, and delete {@link DepartureSchedule} records using the {@link SupabaseService}.
+ * The controller handles user input validation, time parsing and formatting, and ensures
+ * the UI remains responsive by executing database operations on background tasks.
+ * Additionally, it facilitates sidebar navigation to other administrative modules
+ * via the {@link ViewNavigator}.
+ * </p>
+ */
 @Controller
 public class ScheduleManagementController {
 
